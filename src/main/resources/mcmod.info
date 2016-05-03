@@ -1,0 +1,15 @@
+[
+{
+  "modid": "bubbamod",
+  "name": "Bubba Mod",
+  "description": "Bubba mod.",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "https://bubba.bubba",
+  "updateUrl": "",
+  "authorList": ["Curtis"],
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]
