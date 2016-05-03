@@ -6,6 +6,7 @@ import org.apache.logging.log4j.Logger;
 
 // This mod's imports
 import com.example.examplemod.ref.Ref;
+import com.example.examplemod.core.Proxy;
 
 
 // Minecraft imports
