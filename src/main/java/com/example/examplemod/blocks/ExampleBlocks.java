@@ -32,7 +32,7 @@ public class ExampleBlocks {
 		}
 	}
 	
+	public static List<BlockKappa> kappawappa = new ArrayList<BlockKappa>(1);
 	
 }
 
-public static List<BlockKappa> kappawappa = new ArrayList<BlockKappa>(1);
