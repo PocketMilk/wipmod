@@ -1,0 +1,6 @@
+{
+    "variants": {
+        "normal": { "model": "techmod:testBlock" },
+        "inventory": { "model": "examplemod:testBlock" }
+    }
+}
