@@ -20,6 +20,7 @@ public final class TechModRender {
 	public static void registerItemRender() {
 		
 		registerItem(PocketItems.testItem);
+		registerItem(PocketItems.bubbaItem);
 	}
 	
 	public static void registerBlock(Block block) {
