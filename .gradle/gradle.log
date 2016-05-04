@@ -9,20 +9,39 @@
 #################################################
 :deobfCompileDummyTask
 :deobfProvidedDummyTask
+:getVersionJson
+:extractUserdev
+Download http://files.minecraftforge.net/maven/net/minecraftforge/forge/1.9-12.16.1.1887/forge-1.9-12.16.1.1887.pom
+Download http://files.minecraftforge.net/maven/net/minecraftforge/forge/1.9-12.16.1.1887/forge-1.9-12.16.1.1887-userdev.jar
+:extractDependencyATs SKIPPED
+:extractMcpData SKIPPED
+:extractMcpMappings SKIPPED
+:genSrgs SKIPPED
+:downloadClient SKIPPED
+:downloadServer SKIPPED
+:splitServerJar SKIPPED
+:mergeJars SKIPPED
+:deobfMcSRG
+Applying SpecialSource...
+Applying Exceptor...
+:decompileMc
+:fixMcSources
+:applySourcePatches
+:remapMcSources
+:recompileMc
+:extractNatives SKIPPED
+:getAssetIndex UP-TO-DATE
+:getAssets
+Current status: 397/1049   37%
+:makeStart
+:setupDecompWorkspace
 :eclipseClasspath
 :eclipseJdt
 :eclipseProject
-:getVersionJson
-:extractNatives SKIPPED
-:extractUserdev
-:getAssetIndex UP-TO-DATE
-:getAssets
-Current status: 645/1049   61%
-:makeStart
 :makeEclipseCleanRunClient
 :makeEclipseCleanRunServer
 :eclipse
 
 BUILD SUCCESSFUL
 
-Total time: 13.997 secs
+Total time: 3 mins 5.554 secs

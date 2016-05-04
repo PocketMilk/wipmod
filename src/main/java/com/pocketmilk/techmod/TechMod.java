@@ -13,7 +13,6 @@ import com.pocketmilk.techmod.blocks.PocketBlocks;
 //import com.example.examplemod.items.ExampleItems;
 
 
-import com.vanhal.progressiveautomation.events.EventPlayers;
 
 
 // Minecraft imports
