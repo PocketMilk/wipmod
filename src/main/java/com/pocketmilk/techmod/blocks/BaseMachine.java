@@ -20,7 +20,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.fml.common.network.internal.FMLNetworkHandler;
 
-public class BaseMachine extends BlockContainer implements IDismantleable {
+public abstract class BaseMachine extends BlockContainer implements IDismantleable {
 	
 	// machineType is used to connect an instance of this block to a specific GUI
 	public String machineType;
@@ -43,6 +43,12 @@ public class BaseMachine extends BlockContainer implements IDismantleable {
 		// This will register a GUI to this instance of this block, for now we don't have that system set up
 		//GUIid = TechMod.proxy.registerGui(machineType);
 	}
+	
+	public void preInit() {
+		this.addRecipe();
+	}
+	
+	public abstract void addRecipe();
 	
 	
 	// There shouldn't be any entities for this block because it's a base class

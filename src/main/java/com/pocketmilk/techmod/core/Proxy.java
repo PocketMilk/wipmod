@@ -16,7 +16,7 @@ public class Proxy {
 	public void registerEntities() {
 		//miner
 		//GameRegistry.registerTileEntity(TileMiner.class, "TileMiner");
-		GameRegistry.registerTileEntity(TileGenerator.class, "TileGenerator");
+		GameRegistry.registerTileEntity(TileGenerator.class, "TileGen");
 		
 	}
 	
@@ -58,7 +58,8 @@ public class Proxy {
 	public void preInit(FMLPreInitializationEvent event) {
 		PocketBlocks.initBlocks();
 		PocketItems.initItems();
-		
+		PocketBlocks.addRecipes();
+		PocketItems.addRecipes();
 	}
 	
 	public void init(FMLInitializationEvent event) {

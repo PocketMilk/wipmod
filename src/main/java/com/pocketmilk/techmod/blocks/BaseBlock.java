@@ -5,7 +5,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
 
-public class BaseBlock extends Block {
+public abstract class BaseBlock extends Block {
 	
 	public BaseBlock(String unlocalizedName, Material material, float hardness, float resistance) {
 		super(material);
@@ -15,5 +15,11 @@ public class BaseBlock extends Block {
 		this.setResistance(resistance);
 		//GUIid = ProgressiveAutomation.proxy.registerGui(machineType);
 	}
+	
+	public void preInit() {
+		this.addRecipe();
+	}
+	
+	public abstract void addRecipe();
 
 }

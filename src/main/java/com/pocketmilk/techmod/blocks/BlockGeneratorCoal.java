@@ -6,14 +6,17 @@ import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 
 import com.pocketmilk.techmod.entities.TileGenerator;
+import com.pocketmilk.techmod.items.PocketItems;
 
 import net.minecraft.block.state.BlockStateContainer;
 
@@ -36,6 +39,15 @@ public class BlockGeneratorCoal extends BaseMachine {
 		this.setDefaultState(this.blockState.getBaseState()
 				.withProperty(FACING, EnumFacing.NORTH)
 				.withProperty(ACTIVE, false));
+	}
+	
+	public void addRecipe() {
+		GameRegistry.addRecipe(new ItemStack(PocketBlocks.blockGeneratorCoal),
+				"AAA",
+				"AAA",
+				"AAA",
+				'A', PocketItems.bubbaItem
+		);
 	}
 	
 	// When this block is placed in the world, it will create an instance of the Generator tile entity on the same position.
