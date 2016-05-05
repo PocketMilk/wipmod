@@ -3,16 +3,20 @@ package com.pocketmilk.techmod.core;
 
 //import net.minecraftforge.fml.common.registry.GameRegistry;
 import com.pocketmilk.techmod.blocks.PocketBlocks;
+import com.pocketmilk.techmod.entities.TileGenerator;
 import com.pocketmilk.techmod.items.PocketItems;
+
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 
 public class Proxy {
 
 	public void registerEntities() {
 		//miner
 		//GameRegistry.registerTileEntity(TileMiner.class, "TileMiner");
+		GameRegistry.registerTileEntity(TileGenerator.class, "TileGenerator");
 		
 	}
 	
@@ -62,6 +66,6 @@ public class Proxy {
 	}
 	
 	public void postInit(FMLPostInitializationEvent event) {
-		
+		registerEntities();
 	}
 }

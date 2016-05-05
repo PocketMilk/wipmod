@@ -1,0 +1,13 @@
+{
+    "variants": {
+        "normal": { "model": "techmod:BlockGeneratorCoal" },
+		"active=false,facing=south": { "model": "techmod:BlockGeneratorCoal" },
+        "active=false,facing=west": { "model": "techmod:BlockGeneratorCoal", "y": 90 },
+        "active=false,facing=north": { "model": "techmod:BlockGeneratorCoal", "y": 180 },
+        "active=false,facing=east": { "model": "techmod:BlockGeneratorCoal", "y": 270 },
+        "active=true,facing=south": { "model": "techmod:BlockGeneratorOnCoal" },
+        "active=true,facing=west": { "model": "techmod:BlockGeneratorOnCoal", "y": 90 },
+        "active=true,facing=north": { "model": "techmod:BlockGeneratorOnCoal", "y": 180 },
+        "active=true,facing=east": { "model": "techmod:BlockGeneratorOnCoal", "y": 270 }
+    }
+}

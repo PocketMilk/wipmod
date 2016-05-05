@@ -23,5 +23,6 @@ public interface IDismantleable {
 	 * Return true if the block can be dismantled. The criteria for this is entirely up to the block.
 	 */
 	boolean canDismantle(EntityPlayer player, World world, int x, int y, int z);
+	
 
 }

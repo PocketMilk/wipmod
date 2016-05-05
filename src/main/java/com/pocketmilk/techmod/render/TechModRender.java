@@ -14,7 +14,8 @@ public final class TechModRender {
 	
 	public static void registerBlockRender() {
 		
-		registerBlock(PocketBlocks.testBlock);	
+		registerBlock(PocketBlocks.testBlock);
+		registerBlock(PocketBlocks.blockGeneratorCoal);
 	}
 	
 	public static void registerItemRender() {
