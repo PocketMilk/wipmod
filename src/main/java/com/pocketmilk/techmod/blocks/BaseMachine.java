@@ -41,7 +41,7 @@ public abstract class BaseMachine extends BlockContainer implements IDismantleab
 		this.isBlockContainer = true;
 		
 		// This will register a GUI to this instance of this block, for now we don't have that system set up
-		//GUIid = TechMod.proxy.registerGui(machineType);
+		GUIid = TechMod.proxy.registerGui(machineType);
 	}
 	
 	public void preInit() {
@@ -67,13 +67,16 @@ public abstract class BaseMachine extends BlockContainer implements IDismantleab
 	// This function is called when the block is right-clicked, once the GUI is set up this will open it up
 	@Override
 	public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
-		//if (!world.isRemote) {
-		//	if (GUIid>=0) {
-		//		if (!(player instanceof FakePlayer)) {
-		//			FMLNetworkHandler.openGui(player, ProgressiveAutomation.instance, GUIid, world, pos.getX(), pos.getY(), pos.getZ());
-		//		}
-		//	}
-		//}
+		if (!world.isRemote) {
+			System.out.println("Block activated!");
+			if (GUIid>=0) {
+				System.out.println("Has GUI ID of "+GUIid);
+				if (!(player instanceof FakePlayer)) {
+					System.out.println("Player is not a FakePlayer instance?");
+					FMLNetworkHandler.openGui(player, TechMod.instance, GUIid, world, pos.getX(), pos.getY(), pos.getZ());
+				}
+			}
+		}
 		return true;
 	}
 	

@@ -2,6 +2,7 @@ package com.pocketmilk.techmod.core;
 
 
 //import net.minecraftforge.fml.common.registry.GameRegistry;
+import com.pocketmilk.techmod.TechMod;
 import com.pocketmilk.techmod.blocks.PocketBlocks;
 import com.pocketmilk.techmod.entities.TileGenerator;
 import com.pocketmilk.techmod.items.PocketItems;
@@ -21,29 +22,33 @@ public class Proxy {
 	}
 	
 	public int registerGui(String guiName) {
-		//return registerGui(guiName, guiName);
-		return 0;
+		System.out.println("registerGui called.");
+		return registerGui(guiName, guiName);
 	}
 	
 	public int registerGui(String guiName, String containerName) {
-		/*Class<?> gui = null;
+		Class<?> gui = null;
 		Class<?> container = null;
+		System.out.println("Register GUI called with name " + guiName);
 		try {
-			gui = Proxy.class.getClassLoader().loadClass("com.vanhal.progressiveautomation.gui.client.GUI" + guiName);
+			gui = Proxy.class.getClassLoader().loadClass("com.pocketmilk.techmod.gui.client.GUI" + guiName);
 		} catch (ClassNotFoundException e) {
-			
+			System.out.println("Client GUI not found.");
 		}
 		try {
-			container = Proxy.class.getClassLoader().loadClass("com.vanhal.progressiveautomation.gui.container.Container" + containerName);
+			container = Proxy.class.getClassLoader().loadClass("com.pocketmilk.techmod.gui.server.Container" + containerName);
 		} catch (ClassNotFoundException e) {
+			System.out.println("Server GUI not found.");
 			return -1;
 		}
 		if (gui == null) {
-			return ProgressiveAutomation.guiHandler.registerServerGui(container);
+			System.out.println("Registering server GUI only");
+			return TechMod.guiHandler.registerServerGui(container);
 		} else {
-			return ProgressiveAutomation.guiHandler.registerGui(gui, container);
-		}*/
-		return 0;
+			System.out.println("Registering client GUI");
+			return TechMod.guiHandler.registerGui(gui, container);
+		}
+		
 	}
 	
 	public boolean isClient() {

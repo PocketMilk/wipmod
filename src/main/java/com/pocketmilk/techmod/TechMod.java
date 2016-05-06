@@ -4,14 +4,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 
-
-
 // This mod's imports
 import com.pocketmilk.techmod.ref.Ref;
 import com.pocketmilk.techmod.core.Proxy;
 import com.pocketmilk.techmod.blocks.PocketBlocks;
-//import com.example.examplemod.items.ExampleItems;
-
+import com.pocketmilk.techmod.gui.SimpleGuiHandler;
 
 
 
@@ -26,6 +23,8 @@ import net.minecraftforge.fml.common.Mod.Instance;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.fml.relauncher.Side;
 
 @Mod(modid = Ref.MODID, name = Ref.MODNAME, version = Ref.Version, dependencies = "after:CoFHAPI|energy;after:CoFHCore;")
 public class TechMod
@@ -39,6 +38,9 @@ public class TechMod
 	//logger
 	public static final Logger logger = LogManager.getLogger(Ref.MODID);
 	
+	// GUI Handler
+	public static SimpleGuiHandler guiHandler = new SimpleGuiHandler();
+	
 	public TechMod() {
 		logger.info("Starting Pocketmilk 1.0");
 	}
@@ -46,6 +48,8 @@ public class TechMod
     @EventHandler // - Pre-initialization, create content
     public void preInit(FMLPreInitializationEvent event)
     {
+    	//NetworkHandler.registerMessageHandler(PartialTileNBTUpdateMessageHandler.class,
+		//		PartialTileNBTUpdateMessage.class, Side.CLIENT);
 		this.proxy.preInit(event);
 		//MinecraftForge.EVENT_BUS.register(new EventPlayers());
     }
@@ -53,6 +57,7 @@ public class TechMod
     @EventHandler // Initialization, recipe registration
     public void init(FMLInitializationEvent event)
     {
+    	NetworkRegistry.INSTANCE.registerGuiHandler(instance, guiHandler);
 		this.proxy.init(event);
 		FMLCommonHandler.instance().bus().register(instance);
 		//proxy.init();
