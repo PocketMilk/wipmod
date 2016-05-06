@@ -68,11 +68,8 @@ public abstract class BaseMachine extends BlockContainer implements IDismantleab
 	@Override
 	public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
 		if (!world.isRemote) {
-			System.out.println("Block activated!");
 			if (GUIid>=0) {
-				System.out.println("Has GUI ID of "+GUIid);
 				if (!(player instanceof FakePlayer)) {
-					System.out.println("Player is not a FakePlayer instance?");
 					FMLNetworkHandler.openGui(player, TechMod.instance, GUIid, world, pos.getX(), pos.getY(), pos.getZ());
 				}
 			}
@@ -81,7 +78,7 @@ public abstract class BaseMachine extends BlockContainer implements IDismantleab
 	}
 	
 	
-	// Once we get the dismantling rules/tools set up, this function is called when a maachine block is dismantled (Currently does nothing anyways)
+	// Once we get the dismantling rules/tools set up, this function is called when a machine block is dismantled (Currently does nothing anyways)
 	@Override
 	public ArrayList<ItemStack> dismantleBlock(EntityPlayer player, World world, int x, int y, int z, boolean returnDrops) {
 		BlockPos pos = new BlockPos(x, y, z);

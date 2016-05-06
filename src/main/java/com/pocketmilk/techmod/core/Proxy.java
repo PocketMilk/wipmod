@@ -22,30 +22,27 @@ public class Proxy {
 	}
 	
 	public int registerGui(String guiName) {
-		System.out.println("registerGui called.");
 		return registerGui(guiName, guiName);
 	}
 	
+	
+	// This is what registers a GUI class based on the string you passed to it from the block.
+	// The combined string of GUI+"Name"/Container+"Name" -HAS- to match the GUI class names for both client and server
 	public int registerGui(String guiName, String containerName) {
 		Class<?> gui = null;
 		Class<?> container = null;
-		System.out.println("Register GUI called with name " + guiName);
 		try {
 			gui = Proxy.class.getClassLoader().loadClass("com.pocketmilk.techmod.gui.client.GUI" + guiName);
 		} catch (ClassNotFoundException e) {
-			System.out.println("Client GUI not found.");
 		}
 		try {
 			container = Proxy.class.getClassLoader().loadClass("com.pocketmilk.techmod.gui.server.Container" + containerName);
 		} catch (ClassNotFoundException e) {
-			System.out.println("Server GUI not found.");
 			return -1;
 		}
 		if (gui == null) {
-			System.out.println("Registering server GUI only");
 			return TechMod.guiHandler.registerServerGui(container);
 		} else {
-			System.out.println("Registering client GUI");
 			return TechMod.guiHandler.registerGui(gui, container);
 		}
 		
