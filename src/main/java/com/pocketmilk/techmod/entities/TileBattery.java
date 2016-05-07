@@ -8,12 +8,12 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraftforge.common.capabilities.Capability;
 
-public class TileBattery extends BaseTile implements ITickable {
+public class TileBattery extends TileEntity implements ITickable {
 	
 	private TeslaContainer container;
 	
 	public TileBattery() {
-		super(0);
+		super();
 
 		this.container = new TeslaContainer();
 	}
