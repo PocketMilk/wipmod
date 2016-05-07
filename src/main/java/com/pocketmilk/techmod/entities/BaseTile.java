@@ -17,27 +17,26 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
-import cofh.api.energy.IEnergyProvider;
-import cofh.api.energy.IEnergyReceiver;
 
+import net.minecraftforge.common.capabilities.Capability;
+
+import net.darkhax.tesla.api.TeslaContainer;
+import net.darkhax.tesla.capability.TeslaStorage;
 
 // This file is the clusterfuck of overridden functions required by the cofh energy api
 // Honestly, fuck explaining each one myself so if you have the API in the project directories they have explanations for each thing
-public class BaseTile extends TileEntity implements ISidedInventory, IEnergyProvider, IEnergyReceiver, ITickable {
-	protected ItemStack[] slots;
+public class BaseTile extends TileEntity implements ISidedInventory, ITickable {
+
 	protected boolean dirty;
-	protected int progress = 0;
+	protected ItemStack[] slots;
+	public int SLOT_INVENTORY_START = -1;
+	public int SLOT_INVENTORY_END = -1;
+
 	
+	private TeslaContainer container;
 	public EnumFacing facing = EnumFacing.NORTH;
 	
 	private NBTTagCompound partialUpdateTag = new NBTTagCompound();
-	
-	public int SLOT_INVENTORY_START = -1;
-	public int SLOT_INVENTORY_END = -1;
-	
-	public BaseTile() {
-		super();
-	}
 	
 	public BaseTile(int numSlots) {
 		super();
@@ -49,10 +48,7 @@ public class BaseTile extends TileEntity implements ISidedInventory, IEnergyProv
 		} else {
 			SLOT_INVENTORY_START = SLOT_INVENTORY_END = numSlots;
 		}
-	}
-	
-	public boolean isBurning() {
-		return (progress>0);
+		this.container = new TeslaContainer();
 	}
 	
 	public boolean isDirty() {
@@ -65,106 +61,48 @@ public class BaseTile extends TileEntity implements ISidedInventory, IEnergyProv
 	
 	
 	//Energy handling functions
-	@Override
-	public int getMaxEnergyStored(EnumFacing from) {
-		return 0;
-	}
+
 	
-	public int getEnergyStored(EnumFacing from) {
-		return 0;
-	}
-	
-	@Override
-	public int receiveEnergy(EnumFacing from, int maxReceive, boolean simulate) {
-		return 0;
-	}
-	@Override
-	public int extractEnergy(EnumFacing from, int maxExtract, boolean simulate) {
-		return 0;
-	}
-	
-	public boolean canConnectEnergy(EnumFacing from) {
-		 return true;
-	}
 	
 	//Item handling functions
 	
 	@Override
 	public int[] getSlotsForFace(EnumFacing side) {
-		int[] output = new int[slots.length];
-		for (int i=0; i<slots.length; i++) {
-			output[i] = i;
-		}
-		return output;
+		return new int[0];
 	}
 	
 	@Override
 	public boolean canExtractItem(int slot, ItemStack stack, EnumFacing face) {
-		//if (sides[face.ordinal()] == WrenchModes.Mode.Disabled) return false;
-		//if ( (slot>=SLOT_INVENTORY_START) && (slot<=SLOT_INVENTORY_END) ) {
-		//	if ( (sides[face.ordinal()] == WrenchModes.Mode.Normal) || (sides[face.ordinal()] == WrenchModes.Mode.Output) ) return true;
-		//}
-		return true;
+		return false;
 	}
 	
+	@Override
 	public boolean canInsertItem(int slot, ItemStack stack, EnumFacing face) {
-		if ( (slots[slot] != null) 
-				&& (slots[slot].isItemEqual(stack))
-				&& (ItemStack.areItemStackTagsEqual(stack, slots[slot])) ) {
-			int availSpace = this.getInventoryStackLimit() - slots[slot].stackSize;
-			if (availSpace>0) {
-				return true;
-			}
-		} else if (isItemValidForSlot(slot, stack)) {
-			return true;
-		}
 		return false;
 	}
 	
 	@Override
 	public int getSizeInventory() {
-		return slots.length;
+		return 0;
 	}
 
 	@Override
 	public ItemStack getStackInSlot(int slot) {
-		return slots[slot];
+		return null;
 	}
 
 	@Override
 	public ItemStack decrStackSize(int slot, int amt) {
-		if (slots[slot] != null) {
-			ItemStack newStack;
-			if (slots[slot].stackSize <= amt) {
-				newStack = slots[slot];
-				slots[slot] = null;
-			} else {
-				newStack = slots[slot].splitStack(amt);
-				if (slots[slot].stackSize == 0) {
-					slots[slot] = null;
-				}
-			}
-			return newStack;
-		}
 		return null;
 	}
 
 	@Override
 	public ItemStack removeStackFromSlot(int slot) {
-		if (slots[slot]!=null) {
-			ItemStack stack = slots[slot];
-			slots[slot] = null;
-			return stack;
-		}
 		return null;
 	}
 
 	@Override
 	public void setInventorySlotContents(int slot, ItemStack stack) {
-		slots[slot] = stack;
-		if (stack != null && stack.stackSize > this.getInventoryStackLimit()) {
-			stack.stackSize = this.getInventoryStackLimit();
-		}
 	}
 	
 	@Override
@@ -189,8 +127,7 @@ public class BaseTile extends TileEntity implements ISidedInventory, IEnergyProv
 
 	@Override
 	public boolean isUseableByPlayer(EntityPlayer player) {
-		return worldObj.getTileEntity(getPos()) == this &&
-		 player.getDistanceSq(getPos().getX() + 0.5, getPos().getY() + 0.5, getPos().getZ() + 0.5) < 64;
+		return false;
 	}
 
 	@Override
@@ -201,17 +138,39 @@ public class BaseTile extends TileEntity implements ISidedInventory, IEnergyProv
 
 	@Override
 	public boolean isItemValidForSlot(int slot, ItemStack stack) {
-		return false;//this.isItemValidForSlot(slot, stack, false);
+		return false;
 	}
 	
 	@Override
 	public void clear() {
-		for (int i = 0; i < this.slots.length; ++i) {
-            this.slots[i] = null;
-        }
 	}
 	
 	// NBT DATA STUFF
+	 @Override
+	   @SuppressWarnings("unchecked")
+	    public <T> T getCapability (Capability<T> capability, EnumFacing facing) {
+	        
+	        // Provides access to the ITeslaHandler object. This is how other things will connect
+	        // to this TileEntities ITeslaHandler. TeslaStorage.TESLA_HANDLER_CAPANILITY is a
+	        // constant reference to the Tesla capability. This is used to verify that the thing
+	        // requesting the capability is requesting the tesla one.
+	        if (capability == TeslaStorage.TESLA_HANDLER_CAPABILITY)
+	            return (T) this.container;
+	            
+	        return super.getCapability(capability, facing);
+	    }
+	 
+	 @Override
+	    public boolean hasCapability (Capability<?> capability, EnumFacing facing) {
+	        
+	        // This works similarly to the getter method above. It just checks to see if the
+	        // TileEntity has an ITeslaHandler.
+	        if (capability == TeslaStorage.TESLA_HANDLER_CAPABILITY)
+	            return true;
+	            
+	        return super.hasCapability(capability, facing);
+	    }
+	
 	/**
 	 * Do not extend this method, use writeSyncOnlyNBT, writeCommonNBT or writeNonSyncableNBT as needed.
 	 */
@@ -221,6 +180,7 @@ public class BaseTile extends TileEntity implements ISidedInventory, IEnergyProv
 		
 		writeCommonNBT(nbt);
 		writeNonSyncableNBT(nbt);
+		nbt.setTag("TeslaContainer", this.container.writeNBT(null));
 	}
 	
 	/**
@@ -232,6 +192,8 @@ public class BaseTile extends TileEntity implements ISidedInventory, IEnergyProv
 		
 		readCommonNBT(nbt);
 		readNonSyncableNBT(nbt);
+		
+		 this.container = new TeslaContainer(null, nbt.getTag("TeslaContainer"));
 	}
 
 	public void readFromItemStack(ItemStack itemStack) {
