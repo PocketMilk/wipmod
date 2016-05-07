@@ -11,6 +11,7 @@ public class PocketBlocks {
 	// Create blank local copy of EVERY block we add as a 'Block', variable name is only used to register block
 	//public static Block testBlock;
 	public static Block blockGeneratorCoal;
+	public static Block blockBattery;
 	
 	public static void initBlocks() {
 		//testBlock = new BaseBlock("testBlock", Material.iron, 1, 1);
@@ -22,11 +23,15 @@ public class PocketBlocks {
 		
 		blockGeneratorCoal = new BlockGeneratorCoal();
 		GameRegistry.registerBlock(blockGeneratorCoal, blockGeneratorCoal.getUnlocalizedName().substring(5));
+	
+		blockBattery = new BlockBattery();
+		GameRegistry.registerBlock(blockBattery, blockBattery.getUnlocalizedName().substring(5));
+	
 	}
 	
 	public static void addRecipes() {
 		((BaseMachine) blockGeneratorCoal).preInit();
+		((BaseMachine) blockBattery).preInit();
 	}
 	
 }
-

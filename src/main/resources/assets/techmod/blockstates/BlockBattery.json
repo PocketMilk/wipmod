@@ -1,0 +1,29 @@
+{
+    "variants": {
+        "normal": { "model": "techmod:BlockBattery" },
+		"active=false,facing=south": { "model": "techmod:BlockBattery" },
+        "active=false,facing=west": { "model": "techmod:BlockBattery", "y": 90 },
+        "active=false,facing=north": { "model": "techmod:BlockBattery", "y": 180 },
+        "active=false,facing=east": { "model": "techmod:BlockBattery", "y": 270 },
+        "active=true,facing=south": { "model": "techmod:BlockBattery" },
+        "active=true,facing=west": { "model": "techmod:BlockBattery", "y": 90 },
+        "active=true,facing=north": { "model": "techmod:BlockBattery", "y": 180 },
+        "active=true,facing=east": { "model": "techmod:BlockBattery", "y": 270 },
+        "25=true,facing=south": { "model": "techmod:BlockBattery" },
+        "25=true,facing=west": { "model": "techmod:BlockBattery", "y": 90 },
+        "25=true,facing=north": { "model": "techmod:BlockBattery", "y": 180 },
+        "25=true,facing=east": { "model": "techmod:BlockBattery", "y": 270 },
+        "50=true,facing=south": { "model": "techmod:BlockBattery" },
+        "50=true,facing=west": { "model": "techmod:BlockBattery", "y": 90 },
+        "50=true,facing=north": { "model": "techmod:BlockBattery", "y": 180 },
+        "50=true,facing=east": { "model": "techmod:BlockBattery", "y": 270 },
+        "75=true,facing=south": { "model": "techmod:BlockBattery" },
+        "75=true,facing=west": { "model": "techmod:BlockBattery", "y": 90 },
+        "75=true,facing=north": { "model": "techmod:BlockBattery", "y": 180 },
+        "75=true,facing=east": { "model": "techmod:BlockBattery", "y": 270 },
+        "100=true,facing=south": { "model": "techmod:BlockBattery" },
+        "100=true,facing=west": { "model": "techmod:BlockBattery", "y": 90 },
+        "100=true,facing=north": { "model": "techmod:BlockBattery", "y": 180 },
+        "100=true,facing=east": { "model": "techmod:BlockBattery", "y": 270 }
+    }
+}

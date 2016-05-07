@@ -4,6 +4,7 @@ package com.pocketmilk.techmod.core;
 //import net.minecraftforge.fml.common.registry.GameRegistry;
 import com.pocketmilk.techmod.TechMod;
 import com.pocketmilk.techmod.blocks.PocketBlocks;
+import com.pocketmilk.techmod.entities.TileBattery;
 import com.pocketmilk.techmod.entities.TileGenerator;
 import com.pocketmilk.techmod.items.PocketItems;
 
@@ -18,6 +19,7 @@ public class Proxy {
 		//miner
 		//GameRegistry.registerTileEntity(TileMiner.class, "TileMiner");
 		GameRegistry.registerTileEntity(TileGenerator.class, "TileGen");
+		GameRegistry.registerTileEntity(TileBattery.class, "TileBattery");
 		
 	}
 	

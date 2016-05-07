@@ -23,7 +23,7 @@ public class GUIFurnaceGen extends BaseGUI {
 	public GUIFurnaceGen(InventoryPlayer inv, TileEntity entity) {
 		super(new ContainerFurnaceGen(inv, entity), texture);
 		generator = (TileGenerator)entity;
-		this.setHeight(135);
+		this.setHeight(150);
 	}
 
 	protected void drawText() {
@@ -53,6 +53,7 @@ public class GUIFurnaceGen extends BaseGUI {
 	}
 	
 	protected void drawElements() {
-		//drawFlame(generator.getPercentDone(), 45, 23);
+		drawBurningFlame(20, 47, 35);
+		drawEnergyStorageAmount(36);
 	}
 }

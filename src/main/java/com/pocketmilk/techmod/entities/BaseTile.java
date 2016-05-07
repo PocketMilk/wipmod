@@ -32,6 +32,7 @@ public class BaseTile extends TileEntity implements ISidedInventory, ITickable {
 	public int SLOT_INVENTORY_START = -1;
 	public int SLOT_INVENTORY_END = -1;
 
+	public int SLOT_FUEL = 0;
 	
 	private TeslaContainer container;
 	public EnumFacing facing = EnumFacing.NORTH;

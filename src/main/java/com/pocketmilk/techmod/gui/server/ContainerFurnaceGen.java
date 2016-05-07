@@ -11,9 +11,9 @@ public class ContainerFurnaceGen extends BaseContainer {
 	TileGenerator generator;
 
 	public ContainerFurnaceGen(InventoryPlayer inv, TileEntity entity) {
-		super((BaseTile)entity, 23, 24, false);
+		super((BaseTile)entity, 25, 36, "Fuel");
 		generator = (TileGenerator)entity;
 		
-		addPlayerInventory(inv, 53);
+		addPlayerInventory(inv, 68);
 	}
 }

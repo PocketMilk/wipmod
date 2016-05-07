@@ -16,6 +16,7 @@ public final class TechModRender {
 		
 		//registerBlock(PocketBlocks.testBlock);
 		registerBlock(PocketBlocks.blockGeneratorCoal);
+		registerBlock(PocketBlocks.blockBattery);
 	}
 	
 	public static void registerItemRender() {

@@ -7,6 +7,7 @@ import net.minecraft.util.EnumFacing;
 // Currently, this block doesn't do jack shit sir
 public class TileGenerator extends BaseTile {
 	protected int burnProgress = 0;
+	protected int powerAmount = 0;
 	
 
 	//protected ItemStack[] slots;

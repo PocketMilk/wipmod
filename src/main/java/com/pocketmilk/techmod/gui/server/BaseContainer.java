@@ -6,6 +6,8 @@ import com.pocketmilk.techmod.entities.BaseTile;
 //import com.pocketmilk.techmod.gui.slots.SlotBurn;
 //import com.pocketmilk.techmod.gui.slots.SlotPower;
 
+import com.pocketmilk.techmod.gui.slots.SlotBurn;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -20,15 +22,17 @@ public class BaseContainer extends Container {
 	protected BaseTile entity;
 	
 	public BaseContainer(BaseTile inEntity, int x, int y) {
-		this(inEntity, x, y, true);
+		this(inEntity, x, y, "none");
 	}
 	
-	public BaseContainer(BaseTile inEntity, int x, int y, boolean canPower) {
+	public BaseContainer(BaseTile inEntity, int x, int y, String type) {
 		entity = inEntity;
 		//if (canPower) {
 		//	this.addSlotToContainer(new SlotPower(entity, entity.SLOT_FUEL, x, y)); //burnable and power
 		//} else {
-		//	this.addSlotToContainer(new SlotBurn(entity, entity.SLOT_FUEL, x, y)); //just burnable
+		if(type == "Fuel") {
+			this.addSlotToContainer(new SlotBurn(entity, entity.SLOT_FUEL, x, y)); //just burnable
+		}
 		//}
 	}
 	

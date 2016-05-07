@@ -93,9 +93,14 @@ public class BaseGUI extends GuiContainer {
 	
 	// This is how you would define a 'global' function to draw a certain area of the main texture image
 	// This specific one draws part of the flame in the bottom right of the furnace image based on the burning level
-	//public void drawFlame(float progress, int x, int y) {
-	//	int level = (int)Math.ceil(16*progress);
-	//	drawTexturedModalRect(guiLeft + x, guiTop + y + 16 - level, 240, 240 + (16-level), 16, level);
-	//}
+	public void drawBurningFlame(float percent, int x, int y) {
+		int level = (int)Math.ceil((16*percent)/100);
+		drawTexturedModalRect(guiLeft + x, guiTop + y + 16 - level, 240, 240 + (16-level), 16, level);
+	}
+	
+	public void drawEnergyStorageAmount(float percent) {
+		int percentAsWidth = (int)Math.ceil((percent*160)/100);
+		drawTexturedModalRect(guiLeft + 8, guiTop + 8, 8, 158, percentAsWidth, 12);
+	}
 
 }

@@ -1,0 +1,8 @@
+{
+    "parent": "block/orientable",
+    "textures": {
+        "top": "techmod:blocks/Stone_Top",
+        "front": "techmod:blocks/Stone_Front_2_Active",
+        "side": "techmod:blocks/Stone_Blank"
+    }
+}
