@@ -39,6 +39,12 @@ public class BaseTile extends TileEntity implements ISidedInventory, ITickable {
 	
 	private NBTTagCompound partialUpdateTag = new NBTTagCompound();
 	
+	public BaseTile() {
+		super();
+		slots = new ItemStack[0];
+		this.container = new TeslaContainer();
+	}
+	
 	public BaseTile(int numSlots) {
 		super();
 		slots = new ItemStack[numSlots+1];
