@@ -175,7 +175,7 @@ public class BaseTile extends TileEntity implements ISidedInventory, ITickable {
 	 * Do not extend this method, use writeSyncOnlyNBT, writeCommonNBT or writeNonSyncableNBT as needed.
 	 */
 	@Override
-	public final void writeToNBT(NBTTagCompound nbt) {
+	public void writeToNBT(NBTTagCompound nbt) {
 		super.writeToNBT(nbt);
 		
 		writeCommonNBT(nbt);
@@ -187,7 +187,7 @@ public class BaseTile extends TileEntity implements ISidedInventory, ITickable {
 	 * Do not extend this method, use readSyncOnlyNBT, readCommonNBT or readNonSyncableNBT as needed.
 	 */
 	@Override
-	public final void readFromNBT(NBTTagCompound nbt) {
+	public void readFromNBT(NBTTagCompound nbt) {
 		super.readFromNBT(nbt);
 		
 		readCommonNBT(nbt);
