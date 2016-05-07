@@ -3,7 +3,6 @@ package com.pocketmilk.techmod.blocks;
 import com.pocketmilk.techmod.TechMod;
 
 import java.util.ArrayList;
-import cofh.api.block.IDismantleable;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
@@ -20,7 +19,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.fml.common.network.internal.FMLNetworkHandler;
 
-public abstract class BaseMachine extends BlockContainer implements IDismantleable {
+public abstract class BaseMachine extends BlockContainer {
 	
 	// machineType is used to connect an instance of this block to a specific GUI
 	public String machineType;
@@ -74,41 +73,6 @@ public abstract class BaseMachine extends BlockContainer implements IDismantleab
 				}
 			}
 		}
-		return true;
-	}
-	
-	
-	// Once we get the dismantling rules/tools set up, this function is called when a machine block is dismantled (Currently does nothing anyways)
-	@Override
-	public ArrayList<ItemStack> dismantleBlock(EntityPlayer player, World world, int x, int y, int z, boolean returnDrops) {
-		BlockPos pos = new BlockPos(x, y, z);
-		
-		Block targetBlock = world.getBlockState(pos).getBlock();
-		ItemStack block = new ItemStack(targetBlock);
-
-		// Get the NBT tag contents
-		//if (world.getTileEntity(pos) instanceof BaseTileEntity) {
-		//	BaseTileEntity tileEntity = ((BaseTileEntity) world.getTileEntity(pos));
-		//	tileEntity.writeToItemStack(block);
-		//}
-
-		
-		//if (!returnDrops) {
-	    //    dumpItems(world, pos, block);
-		//	// Remove the tile entity first, so inventory/upgrades doesn't get dumped
-		//	world.removeTileEntity(pos);
-		//	world.setBlockToAir(pos);
-		//}
-
-		ArrayList<ItemStack> items = new ArrayList<ItemStack>();
-		items.add(block);
-		return items;
-	}
-	
-	
-	// By default, the machine blocks can be dismantled. We can override this per block if we don't want it to be
-	@Override
-	public boolean canDismantle(EntityPlayer player, World world, int x, int y, int z) {
 		return true;
 	}
 }
