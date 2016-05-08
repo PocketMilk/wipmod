@@ -78,6 +78,11 @@ public class TileBattery extends TileEntity implements ITickable {
 		
 		return (curPower * 100) / maxPower;
 	}
+	
+	public int getEnergyScaled(int scale)
+	{
+		return (int) ((getPower() * scale / getCapacity()));
+	}
 
     @Override
     public void update () {
@@ -89,8 +94,9 @@ public class TileBattery extends TileEntity implements ITickable {
         	if(this.getPower() >= this.getCapacity()) {
         		this.setPower(this.getCapacity());
         	} else {
-        		System.out.println("I have " + this.container.getStoredPower(EnumFacing.UP) + "/" + this.container.getCapacity(EnumFacing.UP) + " power. I am at " + this.pos.toString());
-            	System.out.println("Percentage = " + getPercentStorage());
+        		this.setPower(this.getPower() + 1);
+        		//System.out.println("I have " + this.container.getStoredPower(EnumFacing.UP) + "/" + this.container.getCapacity(EnumFacing.UP) + " power. I am at " + this.pos.toString());
+            	//System.out.println("Percentage = " + getPercentStorage());
         	}
         }
     }

@@ -1,5 +1,7 @@
 package com.pocketmilk.techmod.gui.server;
 
+import java.util.HashMap;
+
 import com.pocketmilk.techmod.blocks.network.NetworkHandler;
 import com.pocketmilk.techmod.blocks.network.PartialTileNBTUpdateMessage;
 import com.pocketmilk.techmod.entities.BaseTile;
@@ -15,15 +17,46 @@ import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 
-public class BaseContainer extends Container {
+public abstract class BaseContainer extends Container {
 	public static final byte TICKS_PER_MESSAGE = 5;
 	
 	protected BaseTile entity;
 	
-	public BaseContainer(BaseTile inEntity, int x, int y) {
-		this(inEntity, x, y, "none");
+	public HashMap<Integer, BaseSlot> slotMap = new HashMap<Integer, BaseSlot>();
+
+	@Override
+	protected Slot addSlotToContainer(Slot slotIn) {
+		Slot slot = super.addSlotToContainer(slotIn);
+		if(slot instanceof BaseSlot){
+			//TODO remove player slots
+			slotMap.put(slot.getSlotIndex(), (BaseSlot) slot);
+		}
+		return slot;
 	}
+	
+	public static BaseContainer createContainer(Class<? extends BaseContainer> clazz, TileEntity tile, EntityPlayer player){
+		try {
+			BaseContainer container = clazz.newInstance();
+			if(container instanceof IContainerLayout){
+				((IContainerLayout) container).setPlayer(player);
+				((IContainerLayout) container).setTile(tile);
+				((IContainerLayout) container).addInventorySlots();
+				((IContainerLayout) container).addPlayerSlots();
+			}
+			return container;
+		} catch (InstantiationException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	/*public BaseContainer(BaseTile inEntity, int x, int y) {
+		this(inEntity, x, y, "none");
+	}*/
 	
 	public BaseContainer(BaseTile inEntity, int x, int y, String type) {
 		entity = inEntity;
@@ -36,6 +69,9 @@ public class BaseContainer extends Container {
 		//}
 	}
 	
+	public BaseContainer() {
+	}
+
 	public boolean canInteractWith(EntityPlayer player) {
 		return true;
 	}
@@ -128,21 +164,5 @@ public class BaseContainer extends Container {
 				this.addSlotToContainer(new Slot(inventory, startSlot + i++, x + (w*18), y + (h*18)));
 			}
 		}
-	}
-	
-	
-	public void detectAndSendChanges() {
-		super.detectAndSendChanges();
-		
-		if (entity.isDirty() && entity.getWorld().getWorldTime() % TICKS_PER_MESSAGE == 0) {
-			PartialTileNBTUpdateMessage message = entity.getPartialUpdateMessage();
-			
-			for (Object o : this.crafters) {
-				if (o instanceof EntityPlayerMP) {
-					EntityPlayerMP player = (EntityPlayerMP) o;
-					NetworkHandler.sendToPlayer(message, player);
-				}
-			}
-		}		
 	}
 }

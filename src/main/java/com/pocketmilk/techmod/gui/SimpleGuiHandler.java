@@ -25,13 +25,13 @@ public class SimpleGuiHandler implements IGuiHandler {
 	@Override
 	public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
 		System.out.println("getServerGuiElement");
-		
 		if (ID == coalGeneratorID)
 		{
 			return new ContainerFurnaceGen(player.inventory, (TileGenerator) world.getTileEntity(new BlockPos(x, y, z)));
+		} else if (ID == batteryID)
+		{
+			return new ContainerBattery((TileBattery) world.getTileEntity(new BlockPos(x, y, z)), player);
 		}
-		
-		
 		return null;
 	}
 
@@ -42,6 +42,9 @@ public class SimpleGuiHandler implements IGuiHandler {
 		if (ID == coalGeneratorID)
 		{
 			return new GUIFurnaceGen(player, (TileGenerator) world.getTileEntity(new BlockPos(x, y, z)));
+		} else if (ID == batteryID)
+		{
+			return new GUIBattery(player, (TileBattery) world.getTileEntity(new BlockPos(x, y, z)));
 		}
 		
 

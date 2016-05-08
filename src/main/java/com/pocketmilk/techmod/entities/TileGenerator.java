@@ -267,7 +267,7 @@ public class TileGenerator extends BaseTile {
 				this.givePower(generationRate, EnumFacing.UP, false);
 			}
 			this.outputEnergy();
-            System.out.println("I have " + this.getPower() + "/" + this.getCapacity() + " power. I am at " + this.pos.toString());
+            //System.out.println("I have " + this.getPower() + "/" + this.getCapacity() + " power. I am at " + this.pos.toString());
             powerAmount = (int)this.getPower();
 		}
 	}
