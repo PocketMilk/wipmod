@@ -18,7 +18,6 @@ import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.common.capabilities.Capability;
-
 import net.darkhax.tesla.api.TeslaContainer;
 import net.darkhax.tesla.capability.TeslaStorage;
 
@@ -33,7 +32,7 @@ public class BaseTile extends TileEntity implements ISidedInventory, ITickable {
 
 	public int SLOT_FUEL = 0;
 	
-	private TeslaContainer container;
+	public TeslaContainer container;
 	public EnumFacing facing = EnumFacing.NORTH;
 	
 	private NBTTagCompound partialUpdateTag = new NBTTagCompound();
