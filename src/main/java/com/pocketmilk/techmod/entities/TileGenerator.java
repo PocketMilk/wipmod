@@ -13,9 +13,10 @@ import net.minecraft.util.EnumFacing;
 
 // Currently, this block doesn't do jack shit sir
 public class TileGenerator extends BaseTile {
-	protected int burnProgress = 0;
-	protected int lastBurnTime = 0;
+	public int burnProgress = 0;
+	public int lastBurnTime = 0;
 	public int generationRate = 30;
+	public int powerAmount = 0;
 	
 
 	//protected ItemStack[] slots;
@@ -31,9 +32,16 @@ public class TileGenerator extends BaseTile {
 	}
 	
 	private void Init() {
-		setCapacity(5000);
+		setCapacity(6000);
 		setInputRate(20);
 		setOutputRate(20);
+	}
+	
+	public long getPercentStorage() {
+		long curPower = this.container.getStoredPower(EnumFacing.UP);
+		long maxPower = this.container.getCapacity(EnumFacing.UP);
+		System.out.println(curPower + "  " + maxPower);
+		return (curPower * 100) / maxPower;
 	}
 	
 	public boolean hasPower() {
@@ -260,6 +268,7 @@ public class TileGenerator extends BaseTile {
 			}
 			this.outputEnergy();
             System.out.println("I have " + this.getPower() + "/" + this.getCapacity() + " power. I am at " + this.pos.toString());
+            powerAmount = (int)this.getPower();
 		}
 	}
 	
@@ -287,8 +296,9 @@ public class TileGenerator extends BaseTile {
 	@Override
 	public void readCommonNBT(NBTTagCompound nbt) {
 		//super.readFromNBT(nbt);
-		//if (nbt.hasKey("BurnProgress")) burnProgress = nbt.getInteger("BurnProgress");
-		//if (nbt.hasKey("burnTime")) lastBurnTime = nbt.getInteger("burnTime");
+		if (nbt.hasKey("BurnProgress")) burnProgress = nbt.getInteger("BurnProgress");
+		if (nbt.hasKey("burnTime")) lastBurnTime = nbt.getInteger("burnTime");
+		if (nbt.hasKey("PowerAmount")) powerAmount = nbt.getInteger("PowerAmount");
 		//if (nbt.hasKey("facing")) facing = EnumFacing.getFront(nbt.getInteger("facing"));
 		
 	}
@@ -296,8 +306,9 @@ public class TileGenerator extends BaseTile {
 	@Override
 	public void writeCommonNBT(NBTTagCompound nbt) {
 		//super.writeCommonNBT(nbt);
-		//nbt.setInteger("BurnProgress", burnProgress);
-		//nbt.setInteger("burnTime", lastBurnTime);
+		nbt.setInteger("BurnProgress", burnProgress);
+		nbt.setInteger("burnTime", lastBurnTime);
+		nbt.setInteger("PowerAmount", powerAmount);
 		//nbt.setInteger("facing", facing.ordinal());
 	}
 	
