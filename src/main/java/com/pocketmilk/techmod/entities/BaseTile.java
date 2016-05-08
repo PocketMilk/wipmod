@@ -17,7 +17,6 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
-
 import net.minecraftforge.common.capabilities.Capability;
 
 import net.darkhax.tesla.api.TeslaContainer;
@@ -68,7 +67,17 @@ public class BaseTile extends TileEntity implements ISidedInventory, ITickable {
 	
 	
 	//Energy handling functions
-
+    
+    public boolean hasTelsaCapability() {
+    	return this.hasCapability(TeslaStorage.TESLA_HANDLER_CAPABILITY, EnumFacing.UP);
+    }
+	
+    public long getPercentStorage() {
+		long curPower = this.container.getStoredPower(EnumFacing.UP);
+		long maxPower = this.container.getCapacity(EnumFacing.UP);
+		System.out.println(curPower + "  " + maxPower);
+		return (curPower * 100) / maxPower;
+	}
 	
 	
 	//Item handling functions

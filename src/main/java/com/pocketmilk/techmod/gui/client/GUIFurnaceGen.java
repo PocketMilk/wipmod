@@ -5,6 +5,7 @@ import com.pocketmilk.techmod.gui.server.ContainerFurnaceGen;
 import com.pocketmilk.techmod.ref.Ref;
 //import com.pocketmilk.techmod.util.StringHelper;
 
+
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
@@ -53,7 +54,8 @@ public class GUIFurnaceGen extends BaseGUI {
 	}
 	
 	protected void drawElements() {
-		drawBurningFlame(20, 47, 35);
-		drawEnergyStorageAmount(36);
+		System.out.println(generator.getPercentStorage());
+		drawBurningFlame(generator.getBurnProgressPercent(), 46, 35);
+		drawEnergyStorageAmount((int)generator.getPercentStorage());
 	}
 }
