@@ -3,6 +3,7 @@ package com.pocketmilk.techmod.gui.server;
 import com.pocketmilk.techmod.entities.BaseTile;
 import com.pocketmilk.techmod.entities.TileBattery;
 import com.pocketmilk.techmod.entities.TileGenerator;
+import com.pocketmilk.techmod.gui.slots.SlotBurn;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -38,6 +39,7 @@ public class ContainerBattery extends BaseContainer {
 		{
 			this.addSlotToContainer(new BaseSlot(player.inventory, i, 8 + i * 18, 142));
 		}
+		
 
 		//this.addSlotToContainer(new SlotCharge(tile.inventory, 0, 80, 17));
 		//this.addSlotToContainer(new SlotCharge(tile.inventory, 1, 80, 53));

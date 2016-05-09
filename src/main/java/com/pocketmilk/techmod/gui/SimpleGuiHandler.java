@@ -27,7 +27,7 @@ public class SimpleGuiHandler implements IGuiHandler {
 		System.out.println("getServerGuiElement");
 		if (ID == coalGeneratorID)
 		{
-			return new ContainerFurnaceGen(player.inventory, (TileGenerator) world.getTileEntity(new BlockPos(x, y, z)));
+			return new ContainerFurnaceGen((TileGenerator) world.getTileEntity(new BlockPos(x, y, z)), player);
 		} else if (ID == batteryID)
 		{
 			return new ContainerBattery((TileBattery) world.getTileEntity(new BlockPos(x, y, z)), player);

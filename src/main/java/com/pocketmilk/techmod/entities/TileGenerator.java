@@ -5,42 +5,59 @@ import net.darkhax.tesla.api.ITeslaHandler;
 import net.darkhax.tesla.api.TeslaContainer;
 import net.darkhax.tesla.capability.TeslaStorage;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityFurnace;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ITickable;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraftforge.common.capabilities.Capability;
 
 // Currently, this block doesn't do jack shit sir
-public class TileGenerator extends BaseTile {
+public class TileGenerator extends TileEntity implements ITickable, ISidedInventory {
+	
+	private TeslaContainer container;
+	
 	public int burnProgress = 0;
 	public int lastBurnTime = 0;
-	public int generationRate = 30;
-	public int powerAmount = 0;
+	
+	public ItemStack[] slots;
+	public int SLOT_INVENTORY_START = -1;
+	public int SLOT_INVENTORY_END = -1;
+	public int SLOT_FUEL = 0;
+	
+	private int numSlots = 0;
 	
 
 	//protected ItemStack[] slots;
-	
 	public TileGenerator() {
-		super(0);
-		Init();
-	}
-	
-	public TileGenerator(int numSlots) {
-		super(numSlots);
+		super();
+		
+		this.container = new TeslaContainer();
+		
+		slots = new ItemStack[1];
+		if (numSlots > 9) {
+			SLOT_INVENTORY_START = numSlots - 8;
+			SLOT_INVENTORY_END = numSlots;
+			//ProgressiveAutomation.logger.info("Start: "+SLOT_INVENTORY_START+" End: "+SLOT_INVENTORY_END);
+		} else {
+			SLOT_INVENTORY_START = SLOT_INVENTORY_END = numSlots;
+		}
 		Init();
 	}
 	
 	private void Init() {
-		setCapacity(6000);
-		setInputRate(20);
-		setOutputRate(20);
+		this.setCapacity(6000);
+		this.setInputRate(10);
+		this.setOutputRate(10);
 	}
 	
 	public long getPercentStorage() {
 		long curPower = this.container.getStoredPower(EnumFacing.UP);
 		long maxPower = this.container.getCapacity(EnumFacing.UP);
-		System.out.println(curPower + "  " + maxPower);
+		//System.out.println(curPower + "  " + maxPower);
 		return (curPower * 100) / maxPower;
 	}
 	
@@ -50,6 +67,14 @@ public class TileGenerator extends BaseTile {
 	
 	public void setPower(long value) {
 		this.container.setPower(value);
+	}
+	
+	public void setBurnTime(int value) {
+		this.burnProgress = value;
+	}
+	
+	public void setTotalBurnTime(int value) {
+		this.lastBurnTime = value;
 	}
 	
 	public long getPower() {
@@ -67,8 +92,6 @@ public class TileGenerator extends BaseTile {
 	public void takePower (long tesla, EnumFacing side, boolean simulated) {
 		this.container.takePower(tesla, side, simulated);
 	}
-	
-	
 	
 	public void setCapacity(long capacity) {
 		 this.container.setCapacity(capacity);
@@ -106,7 +129,7 @@ public class TileGenerator extends BaseTile {
 	
 	// Test if the generator currently has some currently burning progress left
 	public boolean isBurning() {
-		return (burnProgress>0);
+		return (this.burnProgress>0);
 	}
 	
 	// Inventory handling functions -----
@@ -114,8 +137,8 @@ public class TileGenerator extends BaseTile {
 	// Not sure what this one is used for
 	@Override
 	public int[] getSlotsForFace(EnumFacing side) {
-		int[] output = new int[slots.length];
-		for (int i=0; i<slots.length; i++) {
+		int[] output = new int[this.slots.length];
+		for (int i=0; i<this.slots.length; i++) {
 			output[i] = i;
 		}
 		return output;
@@ -223,6 +246,10 @@ public class TileGenerator extends BaseTile {
 		return TileEntityFurnace.getItemBurnTime(slots[0]);
 	}
 	
+	public int getTotalBurnTime() {
+		return this.lastBurnTime;
+	}
+	
 	
 	public int getBurnProgressPercent() {
 		if(isBurning()) {
@@ -241,34 +268,32 @@ public class TileGenerator extends BaseTile {
 	
 	public void update() {
 		if (!worldObj.isRemote) {
-			if (!isBurning()) {
-						if (slots[SLOT_FUEL]!=null) {
-							if (isFuel()) {
-								burnProgress = getBurnTime();
-								lastBurnTime = getBurnTime();
-								//System.out.println(burnProgress);
-								//addPartialUpdate("burnProgress", burnProgress);
-								//addPartialUpdate("burnTime", lastBurnTime);
-									slots[SLOT_FUEL].stackSize--;
-									if (slots[SLOT_FUEL].stackSize==0) {
-										slots[SLOT_FUEL] = null;
+			if (!this.isBurning()) {
+						if (this.slots[SLOT_FUEL]!=null) {
+							if (this.isFuel()) {
+								this.burnProgress = this.getBurnTime();
+								this.lastBurnTime = this.getBurnTime();
+									this.slots[SLOT_FUEL].stackSize--;
+									if (this.slots[SLOT_FUEL].stackSize==0) {
+										this.slots[SLOT_FUEL] = null;
 									}
 								}
 							}
 						}
 			 else {
-				burnProgress--;
-				if (burnProgress<=0) {
-					burnProgress = 0;
-					lastBurnTime = 0;
-					//addPartialUpdate("BurnProgress", burnProgress);
-					//addPartialUpdate("burnTime", lastBurnTime);
+				this.burnProgress--;
+				if (this.burnProgress<=0) {
+					this.burnProgress = 0;
+					this.lastBurnTime = 0;
 				}
-				this.givePower(generationRate, EnumFacing.UP, false);
+				if(this.getPower() >= this.getCapacity()) {
+	        		this.setPower(this.getCapacity());
+	        	} else {
+	        		this.setPower(this.getPower() + this.getInputRate());
+	        	}
 			}
-			this.outputEnergy();
+			//this.outputEnergy();
             //System.out.println("I have " + this.getPower() + "/" + this.getCapacity() + " power. I am at " + this.pos.toString());
-            powerAmount = (int)this.getPower();
 		}
 	}
 	
@@ -294,24 +319,99 @@ public class TileGenerator extends BaseTile {
 	}
 	
 	@Override
-	public void readCommonNBT(NBTTagCompound nbt) {
-		//super.readFromNBT(nbt);
-		if (nbt.hasKey("BurnProgress")) burnProgress = nbt.getInteger("BurnProgress");
-		if (nbt.hasKey("burnTime")) lastBurnTime = nbt.getInteger("burnTime");
-		if (nbt.hasKey("PowerAmount")) powerAmount = nbt.getInteger("PowerAmount");
-		//if (nbt.hasKey("facing")) facing = EnumFacing.getFront(nbt.getInteger("facing"));
-		
+	public void readFromNBT(NBTTagCompound compound) {
+		super.readFromNBT(compound);
+		if (compound.hasKey("burnProgress")) burnProgress = compound.getInteger("burnProgress");
+		if (compound.hasKey("lastBurnTime")) lastBurnTime = compound.getInteger("lastBurnTime");
+		this.container = new TeslaContainer(null, compound.getTag("TeslaContainer"));
 	}
 	
 	@Override
-	public void writeCommonNBT(NBTTagCompound nbt) {
-		//super.writeCommonNBT(nbt);
-		nbt.setInteger("BurnProgress", burnProgress);
-		nbt.setInteger("burnTime", lastBurnTime);
-		nbt.setInteger("PowerAmount", powerAmount);
-		//nbt.setInteger("facing", facing.ordinal());
+	public void writeToNBT (NBTTagCompound compound) {
+		
+		super.writeToNBT(compound);
+		compound.setInteger("burnProgress", burnProgress);
+		compound.setInteger("lastBurnTime", lastBurnTime);
+		compound.setTag("TeslaContainer", this.container.writeNBT(null));
 	}
 	
+	@Override
+	@SuppressWarnings("unchecked")
+	public <T> T getCapability (Capability<T> capability, EnumFacing facing) {
+		
+		if (capability == TeslaStorage.TESLA_HANDLER_CAPABILITY)
+			return (T) this.container;
+		
+		return super.getCapability(capability, facing);
+	}
 	
+	@Override
+    public boolean hasCapability (Capability<?> capability, EnumFacing facing) {
+        
+        // This works similarly to the getter method above. It just checks to see if the
+        // TileEntity has an ITeslaHandler.
+        if (capability == TeslaStorage.TESLA_HANDLER_CAPABILITY)
+            return true;
+            
+        return super.hasCapability(capability, facing);
+    }
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	// USELESS STUFF BELOW
+	// USELESS STUFF BELOW
+	// USELESS STUFF BELOW
+
+	@Override
+	public int getField(int id) {
+		return 0;
+	}
+
+	@Override
+	public void setField(int id, int value) {
+		
+	}
+
+	@Override
+	public int getFieldCount() {
+		return 0;
+	}
+	
+	@Override
+	public String getName() {
+		return null;
+	}
+
+	@Override
+	public boolean hasCustomName() {
+		return false;
+	}
+
+	@Override
+	public ITextComponent getDisplayName() {
+		return null;
+	}
+	
+	@Override
+	public void openInventory(EntityPlayer playerIn) {}
+
+	@Override
+	public void closeInventory(EntityPlayer playerIn) {}
+	
+	@Override
+	public int getInventoryStackLimit() {
+		return 64;
+	}
 	
 }

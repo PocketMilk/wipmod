@@ -15,6 +15,8 @@ public interface IContainerLayout<T extends TileEntity> {
     public void addInventorySlots();
 
     public void addPlayerSlots();
+    
+    public void addExtraSlots();
 
     public void setTile(T tile);
 

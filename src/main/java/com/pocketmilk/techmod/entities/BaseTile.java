@@ -39,7 +39,7 @@ public class BaseTile extends TileEntity implements ISidedInventory, ITickable {
 	
 	public BaseTile() {
 		super();
-		slots = new ItemStack[0];
+		slots = new ItemStack[1];
 		this.container = new TeslaContainer();
 	}
 	

@@ -5,18 +5,10 @@ import org.lwjgl.opengl.GL11;
 import com.pocketmilk.techmod.entities.TileGenerator;
 import com.pocketmilk.techmod.gui.server.ContainerFurnaceGen;
 import com.pocketmilk.techmod.ref.Ref;
-//import com.pocketmilk.techmod.util.StringHelper;
-
-
-
-
-
 
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.client.FMLClientHandler;
 
@@ -35,7 +27,7 @@ public class GUIFurnaceGen extends GuiContainer {
 	public static final FontRenderer fontRenderer = FMLClientHandler.instance().getClient().fontRendererObj;
 
 	public GUIFurnaceGen(EntityPlayer player, TileGenerator entity) {
-		super(new ContainerFurnaceGen(player.inventory, entity));
+		super(new ContainerFurnaceGen(entity, player));
 		generator = entity;
 		containerGenerator = (ContainerFurnaceGen) this.inventorySlots;
 	}
@@ -56,11 +48,13 @@ public class GUIFurnaceGen extends GuiContainer {
 		drawTexturedModalRect(guiLeft, guiTop, 0, 0, guiWidth, guiHeight);
 		
 		// Power Bar
-		int percentAsWidth = (int)Math.ceil((65*160)/100);
-		drawTexturedModalRect(guiLeft + 8, guiTop + 8, 8, 158, percentAsWidth, 12);
+		
+		//int percentAsWidth = (int)Math.ceil((generator.getPower()*160)/100);
+		System.out.println(generator.getPercentStorage());
+		drawTexturedModalRect(guiLeft + 8, guiTop + 8, 8, 158, (int)generator.getPercentStorage(), 12);
 		
 		// Flame
-		int level = (int)Math.ceil((16*78)/100);
+		int level = (int)Math.ceil((16*generator.getBurnProgressPercent())/100);
 		drawTexturedModalRect(guiLeft + 46, guiTop + 35 + (16 - level), 240, 240 + (16-level), 16, level);
 		
 		
