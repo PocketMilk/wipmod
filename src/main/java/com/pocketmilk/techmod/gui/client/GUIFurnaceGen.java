@@ -50,12 +50,15 @@ public class GUIFurnaceGen extends GuiContainer {
 		// Power Bar
 		
 		//int percentAsWidth = (int)Math.ceil((generator.getPower()*160)/100);
-		System.out.println(generator.getPercentStorage());
-		drawTexturedModalRect(guiLeft + 8, guiTop + 8, 8, 158, (int)generator.getPercentStorage(), 12);
+		//System.out.println(generator.getPercentStorage());
+		int energyLevel = Math.round((160*generator.getPercentStorage())/100);
+		drawTexturedModalRect(guiLeft + 8, guiTop + 8, 8, 158, energyLevel, 12);
 		
 		// Flame
-		int level = (int)Math.ceil((16*generator.getBurnProgressPercent())/100);
-		drawTexturedModalRect(guiLeft + 46, guiTop + 35 + (16 - level), 240, 240 + (16-level), 16, level);
+		if(generator.getBurnProgressPercent() != 0) {
+		int level = Math.round((13*generator.getBurnProgressPercent())/100);
+		drawTexturedModalRect(guiLeft + 48, guiTop + 36 + (12 - level), 241, 241 + (12-level), 14, level+1);
+		}
 		
 		
 	}

@@ -20,8 +20,8 @@ public class TileGenerator extends TileEntity implements ITickable, ISidedInvent
 	
 	private TeslaContainer container;
 	
-	public int burnProgress = 0;
-	public int lastBurnTime = 0;
+	private int burnProgress = 0;
+	private int lastBurnTime = 0;
 	
 	public ItemStack[] slots;
 	public int SLOT_INVENTORY_START = -1;
@@ -49,9 +49,9 @@ public class TileGenerator extends TileEntity implements ITickable, ISidedInvent
 	}
 	
 	private void Init() {
-		this.setCapacity(6000);
-		this.setInputRate(10);
-		this.setOutputRate(10);
+		this.setCapacity(10000);
+		this.setInputRate(5);
+		this.setOutputRate(5);
 	}
 	
 	public long getPercentStorage() {
@@ -241,9 +241,13 @@ public class TileGenerator extends TileEntity implements ITickable, ISidedInvent
 		return (TileEntityFurnace.getItemBurnTime(slots[0])>0);
 	}
 	
-	public int getBurnTime() {
+	public int getSlotBurnTime() {
 		if (slots[0]==null) return 0;
 		return TileEntityFurnace.getItemBurnTime(slots[0]);
+	}
+	
+	public int getBurnTime() {
+		return this.burnProgress;
 	}
 	
 	public int getTotalBurnTime() {
@@ -252,35 +256,32 @@ public class TileGenerator extends TileEntity implements ITickable, ISidedInvent
 	
 	
 	public int getBurnProgressPercent() {
-		if(isBurning()) {
-			if(burnProgress != 0 && lastBurnTime != 0) {
-				return (int)((burnProgress * 100) / lastBurnTime);
-				
-			}
-			else
-				return 0;
-			
-		}
+		if(this.burnProgress != 0 && this.lastBurnTime != 0)
+				return (int)((this.burnProgress * 100) / this.lastBurnTime);
 		else
 			return 0;
+				
 	}
 	
 	
 	public void update() {
 		if (!worldObj.isRemote) {
 			if (!this.isBurning()) {
-						if (this.slots[SLOT_FUEL]!=null) {
-							if (this.isFuel()) {
-								this.burnProgress = this.getBurnTime();
-								this.lastBurnTime = this.getBurnTime();
-									this.slots[SLOT_FUEL].stackSize--;
-									if (this.slots[SLOT_FUEL].stackSize==0) {
-										this.slots[SLOT_FUEL] = null;
-									}
-								}
+				if(!(this.getPower() >= this.getCapacity())) {
+					if (this.slots[SLOT_FUEL]!=null) {
+						if (this.isFuel()) {
+							this.burnProgress = this.getSlotBurnTime();
+							this.lastBurnTime = this.getSlotBurnTime();
+							this.slots[SLOT_FUEL].stackSize--;
+							if (this.slots[SLOT_FUEL].stackSize==0) {
+								this.slots[SLOT_FUEL] = null;
 							}
 						}
-			 else {
+					}
+				}
+			}
+			else {
+				//System.out.println(this.burnProgress);
 				this.burnProgress--;
 				if (this.burnProgress<=0) {
 					this.burnProgress = 0;
@@ -321,8 +322,8 @@ public class TileGenerator extends TileEntity implements ITickable, ISidedInvent
 	@Override
 	public void readFromNBT(NBTTagCompound compound) {
 		super.readFromNBT(compound);
-		if (compound.hasKey("burnProgress")) burnProgress = compound.getInteger("burnProgress");
-		if (compound.hasKey("lastBurnTime")) lastBurnTime = compound.getInteger("lastBurnTime");
+		if (compound.hasKey("burnProgress")) this.burnProgress = compound.getInteger("burnProgress");
+		if (compound.hasKey("lastBurnTime")) this.lastBurnTime = compound.getInteger("lastBurnTime");
 		this.container = new TeslaContainer(null, compound.getTag("TeslaContainer"));
 	}
 	
@@ -330,8 +331,8 @@ public class TileGenerator extends TileEntity implements ITickable, ISidedInvent
 	public void writeToNBT (NBTTagCompound compound) {
 		
 		super.writeToNBT(compound);
-		compound.setInteger("burnProgress", burnProgress);
-		compound.setInteger("lastBurnTime", lastBurnTime);
+		compound.setInteger("burnProgress", this.burnProgress);
+		compound.setInteger("lastBurnTime", this.lastBurnTime);
 		compound.setTag("TeslaContainer", this.container.writeNBT(null));
 	}
 	

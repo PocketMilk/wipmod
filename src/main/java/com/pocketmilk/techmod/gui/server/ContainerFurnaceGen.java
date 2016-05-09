@@ -52,12 +52,35 @@ public class ContainerFurnaceGen extends BaseContainer {
 	}
 	
 	@Override
+	public void detectAndSendChanges()
+	{
+		super.detectAndSendChanges();
+		for (int i = 0; i < this.crafters.size(); i++)
+		{
+			ICrafting icrafting = this.crafters.get(i);
+			if (this.energy != (int) tile.getPower())
+			{
+				icrafting.sendProgressBarUpdate(this, 2, (int) tile.getPower());
+			}
+			if (this.burnTime != (int) tile.getBurnTime())
+			{
+				icrafting.sendProgressBarUpdate(this, 0, (int) tile.getBurnTime());
+			}
+			if (this.totalBurnTime != (int) tile.getTotalBurnTime())
+			{
+				icrafting.sendProgressBarUpdate(this, 1, (int) tile.getTotalBurnTime());
+			}
+		}
+	}
+	
+	@Override
 	public void onCraftGuiOpened(ICrafting crafting)
 	{
 		super.onCraftGuiOpened(crafting);
 		crafting.sendProgressBarUpdate(this, 2, (int) tile.getPower());
 		crafting.sendProgressBarUpdate(this, 1, (int) tile.getTotalBurnTime());
 		crafting.sendProgressBarUpdate(this, 0, (int) tile.getBurnTime());
+		//System.out.println("Kappa " + tile.getBurnTime());
 	}
 	
 	@SideOnly(Side.CLIENT)
