@@ -18,8 +18,8 @@ public class ContainerFurnaceGen extends BaseContainer {
 	EntityPlayer player;
 	TileGenerator tile;
 	
-	private int playerInvStart = 68;
-	private int playerBarStart = 126;
+	private int playerInvStart = 75;
+	private int playerBarStart = 133;
 
 	public ContainerFurnaceGen(TileGenerator tile, EntityPlayer player) {
 		super();
@@ -41,7 +41,7 @@ public class ContainerFurnaceGen extends BaseContainer {
 			this.addSlotToContainer(new BaseSlot(player.inventory, i, 8 + i * 18, playerBarStart));
 		}
 		
-		this.addSlotToContainer(new SlotBurn(tile, 0, 25, 36));
+		this.addSlotToContainer(new SlotBurn(tile, 0, 25, 45));
 	}
 	
 
