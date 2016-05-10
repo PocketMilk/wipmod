@@ -1,9 +1,16 @@
 package com.pocketmilk.techmod.blocks;
 
+import net.minecraft.block.Block;
+import net.minecraft.block.properties.IProperty;
+import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.TileEntityFurnace;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
@@ -22,6 +29,7 @@ import com.pocketmilk.techmod.gui.SimpleGuiHandler;
 
 
 public class BlockGeneratorCoal extends BaseMachine {
+	private boolean keepInventory = false;
 	
 	public BlockGeneratorCoal() {
 		// Passes the desired block name to the BaseMachine, and what GUI name will be attached to it
@@ -29,9 +37,7 @@ public class BlockGeneratorCoal extends BaseMachine {
 		super("BlockGeneratorCoal");
 		
 		// By default, the generator will face North and won't be active. Can add the isBurning state as well later
-		this.setDefaultState(this.blockState.getBaseState()
-				.withProperty(FACING, EnumFacing.NORTH)
-				.withProperty(ACTIVE, false));
+
 	}
 	
 	public void addRecipe() {
@@ -60,12 +66,40 @@ public class BlockGeneratorCoal extends BaseMachine {
 		return new TileGenerator();
 	}
 	
+	
     // Gets the current state of the block and entity?
+	@Override
     public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos) {
     	boolean burning = false;
     	if (world.getTileEntity(pos) instanceof TileGenerator) {
     		burning = ((TileGenerator) world.getTileEntity(pos)).isBurning();
+    		System.out.println(burning);
     	}
         return state.withProperty(FACING, state.getValue(FACING)).withProperty(BlockGeneratorCoal.ACTIVE, burning);
     }
+	
+	public void setActive(Boolean active, World world, BlockPos pos)
+	{
+		EnumFacing facing = world.getBlockState(pos).getValue(FACING);
+		IBlockState state = world.getBlockState(pos).withProperty(ACTIVE, active).withProperty(FACING, facing);
+		world.setBlockState(pos, state, 3);
+	}
+    
+    @Override
+    public void breakBlock(World worldIn, BlockPos pos, IBlockState state)
+    {
+        if (!keepInventory)
+        {
+            TileEntity tileentity = worldIn.getTileEntity(pos);
+
+            if (tileentity instanceof TileGenerator)
+            {
+                InventoryHelper.dropInventoryItems(worldIn, pos, (TileGenerator)tileentity);
+                worldIn.updateComparatorOutputLevel(pos, this);
+            }
+        }
+
+        super.breakBlock(worldIn, pos, state);
+    }
+    
 }

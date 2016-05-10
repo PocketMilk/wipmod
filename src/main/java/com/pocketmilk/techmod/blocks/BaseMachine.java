@@ -22,10 +22,10 @@ public abstract class BaseMachine extends BlockContainer {
 	
 	// machineType is used to connect an instance of this block to a specific GUI
 	// This stores what direction the generator is facing
-	public static final PropertyDirection FACING = PropertyDirection.create("facing", EnumFacing.Plane.HORIZONTAL);
+	public static PropertyDirection FACING = PropertyDirection.create("facing", EnumFacing.Plane.HORIZONTAL);
 	
 	// This stores if the block is active or not (just for sending out energy apart from adding a isBurning bool?)
-    public static final PropertyBool ACTIVE = PropertyBool.create("active");
+    public static PropertyBool ACTIVE = PropertyBool.create("active");
 	
 	
 	public BaseMachine(String unlocalizedName) {
@@ -37,6 +37,10 @@ public abstract class BaseMachine extends BlockContainer {
 		this.setUnlocalizedName(unlocalizedName);
 		// Supposedly this is important to set
 		this.isBlockContainer = true;
+		
+		this.setDefaultState(this.blockState.getBaseState()
+				.withProperty(FACING, EnumFacing.NORTH)
+				.withProperty(ACTIVE, false));
 	}
 	
 	public void preInit() {
@@ -59,28 +63,12 @@ public abstract class BaseMachine extends BlockContainer {
 	}
 	
 	
-	// idk yet
-	@Override
-    public int getMetaFromState(IBlockState state) {
-        return ((EnumFacing)state.getValue(FACING)).getIndex();
-    }
-	
-	//idk yet
-	@Override
-    public IBlockState getStateFromMeta(int meta) {
-    	EnumFacing enumfacing = EnumFacing.getFront(meta);
-
-        if (enumfacing.getAxis() == EnumFacing.Axis.Y) {
-            enumfacing = EnumFacing.NORTH;
-        }
-
-        return this.getDefaultState().withProperty(FACING, enumfacing);
-    }
-	
 	// Creates the facing and active property states
 	@Override
 	protected BlockStateContainer createBlockState() {
-      return new BlockStateContainer(this, new IProperty[] {FACING, ACTIVE});
+		FACING = PropertyDirection.create("facing", EnumFacing.Plane.HORIZONTAL);
+		ACTIVE = PropertyBool.create("active");
+		return new BlockStateContainer(this, FACING, ACTIVE);
 	} 
     
 	// When this block is placed, the facing property is oriented towards yourself
@@ -126,7 +114,62 @@ public abstract class BaseMachine extends BlockContainer {
 			world.setBlockState(pos, state.withProperty(FACING, enumfacing), 2);
 		}
     }
-   
+	@Override
+	public int getMetaFromState(IBlockState state)
+	{
+		int facingInt = getSideFromEnum(state.getValue(FACING));
+		int activeInt = state.getValue(ACTIVE) ? 0 : 4;
+		return facingInt + activeInt;
+	}
+	
+	@Override
+	public IBlockState getStateFromMeta(int meta)
+	{
+		boolean active = false;
+		int facingInt = meta;
+		if (facingInt > 4)
+		{
+			active = true;
+			facingInt = facingInt - 4;
+		}
+		EnumFacing facing = getSideFromint(facingInt);
+		return this.getDefaultState().withProperty(FACING, facing).withProperty(ACTIVE, active);
+	}
+	
+	public EnumFacing getSideFromint(int i)
+	{
+		if (i == 0)
+		{
+			return EnumFacing.NORTH;
+		} else if (i == 1)
+		{
+			return EnumFacing.SOUTH;
+		} else if (i == 2)
+		{
+			return EnumFacing.EAST;
+		} else if (i == 3)
+		{
+			return EnumFacing.WEST;
+		}
+		return EnumFacing.NORTH;
+	}
+	
+	public int getSideFromEnum(EnumFacing facing)
+	{
+		if (facing == EnumFacing.NORTH)
+		{
+			return 0;
+		} else if (facing == EnumFacing.SOUTH)
+		{
+			return 1;
+		} else if (facing == EnumFacing.EAST)
+		{
+			return 2;
+		} else if (facing == EnumFacing.WEST)
+		{
+			return 3;
+		}
+		return 0;
+	}
     
-    public abstract IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos);
 }

@@ -1,13 +1,17 @@
 package com.pocketmilk.techmod.entities;
 
 
+import com.pocketmilk.techmod.blocks.BlockGeneratorCoal;
+
 import net.darkhax.tesla.api.ITeslaHandler;
 import net.darkhax.tesla.api.TeslaContainer;
 import net.darkhax.tesla.capability.TeslaStorage;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityFurnace;
 import net.minecraft.util.EnumFacing;
@@ -276,6 +280,7 @@ public class TileGenerator extends TileEntity implements ITickable, ISidedInvent
 							if (this.slots[SLOT_FUEL].stackSize==0) {
 								this.slots[SLOT_FUEL] = null;
 							}
+							this.updateState();
 						}
 					}
 				}
@@ -286,6 +291,7 @@ public class TileGenerator extends TileEntity implements ITickable, ISidedInvent
 				if (this.burnProgress<=0) {
 					this.burnProgress = 0;
 					this.lastBurnTime = 0;
+					//updateState();
 				}
 				if(this.getPower() >= this.getCapacity()) {
 	        		this.setPower(this.getCapacity());
@@ -295,6 +301,23 @@ public class TileGenerator extends TileEntity implements ITickable, ISidedInvent
 			}
 			//this.outputEnergy();
             //System.out.println("I have " + this.getPower() + "/" + this.getCapacity() + " power. I am at " + this.pos.toString());
+		}
+	}
+	
+	public void updateState()
+	{
+		IBlockState BlockStateContainer = worldObj.getBlockState(pos);
+		if (BlockStateContainer.getBlock() instanceof BlockGeneratorCoal)
+		{
+			BlockGeneratorCoal blockMachineBase = (BlockGeneratorCoal) BlockStateContainer.getBlock();
+			if (BlockStateContainer.getValue(blockMachineBase.ACTIVE) != this.isBurning()) {
+				System.out.println("Before " + worldObj.getBlockState(pos).getProperties().toString());
+				EnumFacing facing = worldObj.getBlockState(pos).getValue(blockMachineBase.FACING);
+				IBlockState state = worldObj.getBlockState(pos).withProperty(blockMachineBase.ACTIVE, this.isBurning()).withProperty(blockMachineBase.FACING, facing);
+				worldObj.setBlockState(pos, state);
+				System.out.println("After " + worldObj.getBlockState(pos).getProperties().toString());
+			}
+			
 		}
 	}
 	
@@ -324,6 +347,14 @@ public class TileGenerator extends TileEntity implements ITickable, ISidedInvent
 		super.readFromNBT(compound);
 		if (compound.hasKey("burnProgress")) this.burnProgress = compound.getInteger("burnProgress");
 		if (compound.hasKey("lastBurnTime")) this.lastBurnTime = compound.getInteger("lastBurnTime");
+		 NBTTagList tagList = compound.getTagList("Inventory", 10);
+         for (int i = 0; i < tagList.tagCount(); i++) {
+                 NBTTagCompound tag = (NBTTagCompound) tagList.getCompoundTagAt(i);
+                 byte slot = tag.getByte("Slot");
+                 if (slot >= 0 && slot < slots.length) {
+                         slots[slot] = ItemStack.loadItemStackFromNBT(tag);
+                 }
+         }
 		this.container = new TeslaContainer(null, compound.getTag("TeslaContainer"));
 	}
 	
@@ -333,6 +364,17 @@ public class TileGenerator extends TileEntity implements ITickable, ISidedInvent
 		super.writeToNBT(compound);
 		compound.setInteger("burnProgress", this.burnProgress);
 		compound.setInteger("lastBurnTime", this.lastBurnTime);
+        NBTTagList itemList = new NBTTagList();
+        for (int i = 0; i < slots.length; i++) {
+                ItemStack stack = slots[i];
+                if (stack != null) {
+                        NBTTagCompound tag = new NBTTagCompound();
+                        tag.setByte("Slot", (byte) i);
+                        stack.writeToNBT(tag);
+                        itemList.appendTag(tag);
+                }
+        }
+        compound.setTag("Inventory", itemList);
 		compound.setTag("TeslaContainer", this.container.writeNBT(null));
 	}
 	

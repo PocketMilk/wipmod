@@ -69,6 +69,7 @@ public class GUIFurnaceGen extends GuiContainer {
 		// Flame
 		if(generator.getBurnProgressPercent() != 0) {
 		int level = Math.round((13*generator.getBurnProgressPercent())/100);
+		//System.out.println(level);
 		drawTexturedModalRect(guiLeft + 48, guiTop + 45 + (12 - level), 241, 241 + (12-level), 14, level+1);
 		}
 		
