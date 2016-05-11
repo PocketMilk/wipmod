@@ -1,20 +1,16 @@
 package com.pocketmilk.techmod.blocks;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.properties.IProperty;
+import net.minecraft.block.properties.PropertyBool;
+import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntityFurnace;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.fml.common.network.internal.FMLNetworkHandler;
@@ -31,15 +27,25 @@ import com.pocketmilk.techmod.gui.SimpleGuiHandler;
 public class BlockGeneratorCoal extends BaseMachine {
 	private boolean keepInventory = false;
 	
+	// This stores if the block is active or not (just for sending out energy apart from adding a isBurning bool?)
+    public static PropertyBool ACTIVE = PropertyBool.create("active");
+	
 	public BlockGeneratorCoal() {
-		// Passes the desired block name to the BaseMachine, and what GUI name will be attached to it
-		//     Block name             GUI Name
+		// Passes the desired block name to the BaseMachine
 		super("BlockGeneratorCoal");
 		
-		// By default, the generator will face North and won't be active. Can add the isBurning state as well later
+		this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH).withProperty(ACTIVE, false));
 
 	}
 	
+	@Override
+	protected BlockStateContainer createBlockState() {
+		FACING = PropertyDirection.create("facing", EnumFacing.Plane.HORIZONTAL);
+		ACTIVE = PropertyBool.create("active");
+		return new BlockStateContainer(this, FACING, ACTIVE);
+	} 
+	
+	// This is where we define the crafting recipe for this block
 	public void addRecipe() {
 		GameRegistry.addRecipe(new ItemStack(PocketBlocks.blockGeneratorCoal),
 				"AAA",
@@ -48,6 +54,32 @@ public class BlockGeneratorCoal extends BaseMachine {
 				'A', PocketItems.bubbaItem
 		);
 	}
+	
+	@Override
+	public int getMetaFromState(IBlockState state)
+	{
+		int facingInt = getSideFromEnum(state.getValue(FACING));
+		int activeInt = state.getValue(ACTIVE) ? 4 : 0;
+		//System.out.println(facingInt + " " + activeInt);
+		return facingInt + activeInt;
+	}
+	
+	@Override
+	public IBlockState getStateFromMeta(int meta)
+	{
+		boolean active = false;
+		int facingInt = meta;
+		//System.out.println(meta);
+		if (facingInt > 3)
+		{
+			active = true;
+			facingInt = facingInt - 4;
+		}
+		//System.out.println(facingInt + " " + active);
+		EnumFacing facing = getSideFromint(facingInt);
+		return this.getDefaultState().withProperty(FACING, facing).withProperty(ACTIVE, active);
+	}
+
 	
 	// This function is called when the block is right-clicked, once the GUI is set up this will open it up
 	@Override
@@ -66,25 +98,7 @@ public class BlockGeneratorCoal extends BaseMachine {
 		return new TileGenerator();
 	}
 	
-	
-    // Gets the current state of the block and entity?
-	@Override
-    public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos) {
-    	boolean burning = false;
-    	if (world.getTileEntity(pos) instanceof TileGenerator) {
-    		burning = ((TileGenerator) world.getTileEntity(pos)).isBurning();
-    		System.out.println(burning);
-    	}
-        return state.withProperty(FACING, state.getValue(FACING)).withProperty(BlockGeneratorCoal.ACTIVE, burning);
-    }
-	
-	public void setActive(Boolean active, World world, BlockPos pos)
-	{
-		EnumFacing facing = world.getBlockState(pos).getValue(FACING);
-		IBlockState state = world.getBlockState(pos).withProperty(ACTIVE, active).withProperty(FACING, facing);
-		world.setBlockState(pos, state, 3);
-	}
-    
+    // This block has a container, so it should drop all of the items inside of the fuel slot when broken
     @Override
     public void breakBlock(World worldIn, BlockPos pos, IBlockState state)
     {

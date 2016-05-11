@@ -16,7 +16,9 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityFurnace;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 
 // Currently, this block doesn't do jack shit sir
@@ -291,7 +293,7 @@ public class TileGenerator extends TileEntity implements ITickable, ISidedInvent
 				if (this.burnProgress<=0) {
 					this.burnProgress = 0;
 					this.lastBurnTime = 0;
-					//updateState();
+					this.updateState();
 				}
 				if(this.getPower() >= this.getCapacity()) {
 	        		this.setPower(this.getCapacity());
@@ -302,6 +304,16 @@ public class TileGenerator extends TileEntity implements ITickable, ISidedInvent
 			//this.outputEnergy();
             //System.out.println("I have " + this.getPower() + "/" + this.getCapacity() + " power. I am at " + this.pos.toString());
 		}
+	}
+	
+	@Override
+	public boolean shouldRefresh(World world, BlockPos pos, IBlockState oldState, IBlockState newSate)
+	{
+		if (oldState.getBlock() != newSate.getBlock())
+		{
+			return true;
+		}
+		return false;
 	}
 	
 	public void updateState()

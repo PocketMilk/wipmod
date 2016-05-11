@@ -2,7 +2,7 @@
     "parent": "block/orientable",
     "textures": {
         "top": "techmod:blocks/Stone_Top",
-        "front": "techmod:blocks/Stone_Front_2_Active",
+        "front": "techmod:blocks/Stone_Front_2_Active_25",
         "side": "techmod:blocks/Stone_Blank"
     }
 }

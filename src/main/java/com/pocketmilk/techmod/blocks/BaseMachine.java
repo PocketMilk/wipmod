@@ -24,9 +24,6 @@ public abstract class BaseMachine extends BlockContainer {
 	// This stores what direction the generator is facing
 	public static PropertyDirection FACING = PropertyDirection.create("facing", EnumFacing.Plane.HORIZONTAL);
 	
-	// This stores if the block is active or not (just for sending out energy apart from adding a isBurning bool?)
-    public static PropertyBool ACTIVE = PropertyBool.create("active");
-	
 	
 	public BaseMachine(String unlocalizedName) {
 		// For now, all Machine blocks will be Iron though we can change this later by passing a variable to this constructor (Wood, Stone, Iron tiers?)
@@ -38,9 +35,7 @@ public abstract class BaseMachine extends BlockContainer {
 		// Supposedly this is important to set
 		this.isBlockContainer = true;
 		
-		this.setDefaultState(this.blockState.getBaseState()
-				.withProperty(FACING, EnumFacing.NORTH)
-				.withProperty(ACTIVE, false));
+		this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH));
 	}
 	
 	public void preInit() {
@@ -67,8 +62,7 @@ public abstract class BaseMachine extends BlockContainer {
 	@Override
 	protected BlockStateContainer createBlockState() {
 		FACING = PropertyDirection.create("facing", EnumFacing.Plane.HORIZONTAL);
-		ACTIVE = PropertyBool.create("active");
-		return new BlockStateContainer(this, FACING, ACTIVE);
+		return new BlockStateContainer(this, FACING);
 	} 
     
 	// When this block is placed, the facing property is oriented towards yourself
@@ -118,22 +112,15 @@ public abstract class BaseMachine extends BlockContainer {
 	public int getMetaFromState(IBlockState state)
 	{
 		int facingInt = getSideFromEnum(state.getValue(FACING));
-		int activeInt = state.getValue(ACTIVE) ? 0 : 4;
-		return facingInt + activeInt;
+		return facingInt;
 	}
 	
 	@Override
 	public IBlockState getStateFromMeta(int meta)
 	{
-		boolean active = false;
 		int facingInt = meta;
-		if (facingInt > 4)
-		{
-			active = true;
-			facingInt = facingInt - 4;
-		}
 		EnumFacing facing = getSideFromint(facingInt);
-		return this.getDefaultState().withProperty(FACING, facing).withProperty(ACTIVE, active);
+		return this.getDefaultState().withProperty(FACING, facing);
 	}
 	
 	public EnumFacing getSideFromint(int i)
@@ -159,13 +146,16 @@ public abstract class BaseMachine extends BlockContainer {
 		if (facing == EnumFacing.NORTH)
 		{
 			return 0;
-		} else if (facing == EnumFacing.SOUTH)
+		} 
+		else if (facing == EnumFacing.SOUTH)
 		{
 			return 1;
-		} else if (facing == EnumFacing.EAST)
+		}
+		else if (facing == EnumFacing.EAST)
 		{
 			return 2;
-		} else if (facing == EnumFacing.WEST)
+		} 
+		else if (facing == EnumFacing.WEST)
 		{
 			return 3;
 		}
