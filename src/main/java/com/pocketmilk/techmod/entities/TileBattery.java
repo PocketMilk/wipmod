@@ -28,13 +28,14 @@ public class TileBattery extends TileEntity implements ITickable {
 	}
 	
 	public void doInit() {
-		setCapacity(1000);
+		this.setCapacity(10000);
+		this.setInputRate(20);
+		this.setOutputRate(20);
 	}
 	
 	public boolean hasPower() {
 		return (this.getPower()>0);
 	}
-	
 	public void setPower(long value) {
 		this.container.setPower(value);
 	}
@@ -153,7 +154,6 @@ public class TileBattery extends TileEntity implements ITickable {
 
     @Override
     public void update () {
-        
         // This tile entity will spam the console with how much power it has every tick. In
         // other tile entities this could be used to send power to a tile, or take it from
         // another tile. This isn't required for the actual Tesla tile.
@@ -162,7 +162,7 @@ public class TileBattery extends TileEntity implements ITickable {
         		this.setPower(this.getCapacity());
         		this.updateState(4);
         	} else {
-        		this.setPower(this.getPower() + 1);
+        		//this.setPower(this.getPower() + 1);
         		//System.out.println("I have " + this.container.getStoredPower(EnumFacing.UP) + "/" + this.container.getCapacity(EnumFacing.UP) + " power. I am at " + this.pos.toString());
             	//System.out.println("Percentage = " + getPercentStorage());
         	}
@@ -183,11 +183,11 @@ public class TileBattery extends TileEntity implements ITickable {
 		{
 			BlockBattery blockMachineBase = (BlockBattery) BlockStateContainer.getBlock();
 			if (BlockStateContainer.getValue(blockMachineBase.PERCENT) != amount) {
-				System.out.println("Before " + worldObj.getBlockState(pos).getProperties().toString());
+				//System.out.println("Before " + worldObj.getBlockState(pos).getProperties().toString());
 				EnumFacing facing = worldObj.getBlockState(pos).getValue(blockMachineBase.FACING);
 				IBlockState state = worldObj.getBlockState(pos).withProperty(blockMachineBase.PERCENT, amount).withProperty(blockMachineBase.FACING, facing);
 				worldObj.setBlockState(pos, state);
-				System.out.println("After " + worldObj.getBlockState(pos).getProperties().toString());
+				//System.out.println("After " + worldObj.getBlockState(pos).getProperties().toString());
 			}
 			
 		}

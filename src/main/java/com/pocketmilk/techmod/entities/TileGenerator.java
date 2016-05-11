@@ -1,11 +1,15 @@
 package com.pocketmilk.techmod.entities;
 
 
+import java.util.Iterator;
+import java.util.List;
+
 import com.pocketmilk.techmod.blocks.BlockGeneratorCoal;
 
 import net.darkhax.tesla.api.ITeslaHandler;
 import net.darkhax.tesla.api.TeslaContainer;
 import net.darkhax.tesla.capability.TeslaStorage;
+import net.darkhax.tesla.lib.TeslaUtils;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ISidedInventory;
@@ -56,8 +60,8 @@ public class TileGenerator extends TileEntity implements ITickable, ISidedInvent
 	
 	private void Init() {
 		this.setCapacity(10000);
-		this.setInputRate(5);
-		this.setOutputRate(5);
+		this.setInputRate(10);
+		this.setOutputRate(30);
 	}
 	
 	public long getPercentStorage() {
@@ -91,12 +95,12 @@ public class TileGenerator extends TileEntity implements ITickable, ISidedInvent
 		return this.container.getCapacity(EnumFacing.UP);
 	}
 	
-	public void givePower(long tesla, EnumFacing side, boolean simulated) {
-		this.container.givePower(tesla, side, simulated);
+	public long givePower(long tesla, EnumFacing side, boolean simulated) {
+		return this.container.givePower(tesla, side, simulated);
 	}
 	
-	public void takePower (long tesla, EnumFacing side, boolean simulated) {
-		this.container.takePower(tesla, side, simulated);
+	public long takePower (long tesla, EnumFacing side, boolean simulated) {
+		return this.container.takePower(tesla, side, simulated);
 	}
 	
 	public void setCapacity(long capacity) {
@@ -272,6 +276,7 @@ public class TileGenerator extends TileEntity implements ITickable, ISidedInvent
 	
 	public void update() {
 		if (!worldObj.isRemote) {
+			//System.out.println(this.container.getOutputRate());
 			if (!this.isBurning()) {
 				if(!(this.getPower() >= this.getCapacity())) {
 					if (this.slots[SLOT_FUEL]!=null) {
@@ -301,7 +306,7 @@ public class TileGenerator extends TileEntity implements ITickable, ISidedInvent
 	        		this.setPower(this.getPower() + this.getInputRate());
 	        	}
 			}
-			//this.outputEnergy();
+			this.outputEnergy();
             //System.out.println("I have " + this.getPower() + "/" + this.getCapacity() + " power. I am at " + this.pos.toString());
 		}
 	}
@@ -335,21 +340,25 @@ public class TileGenerator extends TileEntity implements ITickable, ISidedInvent
 	
 	public void outputEnergy() { 
 		//Lets go around the world and try and give it to someone!
-		for(EnumFacing facing : EnumFacing.values()) {
-			//Do we have any energy up for grabs?
-			if (getPower()>0) {
-				TileEntity entity = worldObj.getTileEntity(pos.offset(facing));
-				/*if (entity.hasCapability(TeslaStorage.TESLA_HANDLER_CAPABILITY, EnumFacing.UP)) {
-					
-					ITeslaHandler entityHandler = entity.getCapability(TeslaStorage.TESLA_HANDLER_CAPABILITY, EnumFacing.UP);
-					if (entityHandler.isInputSide(facing.getOpposite())) {
-						long giveAmount = entityHandler.givePower(getOutputRate(), facing.getOpposite(), true);
-						if (giveAmount>0) {
-							entityHandler.givePower(getOutputRate(), facing.getOpposite(), false);
-							takePower(getOutputRate(), EnumFacing.UP, false);
+		if (this.getPower()>0) {
+			List<ITeslaHandler> tileTesla = TeslaUtils.getConnectedTeslaHandlers(worldObj, pos);
+			if(tileTesla.size() != 0) {
+				//System.out.println("Connected tesla container found.");
+				for(Iterator<ITeslaHandler> i = tileTesla.iterator(); i.hasNext();) {
+					ITeslaHandler tile = i.next();
+					long ownPowerSent = this.takePower(this.getOutputRate(), null, false);
+					if(ownPowerSent != 0) {
+						long powerAccepted = tile.givePower(this.getOutputRate(), EnumFacing.UP, false);
+						if(powerAccepted < ownPowerSent) {
+							//System.out.println("Power Sent: " + ownPowerSent + "/" + this.getOutputRate() + " - Max Power Accepted: " + powerAccepted);
+							//System.out.println("Current power after sending " + ownPowerSent + " = " + this.getPower());
+							if((ownPowerSent-powerAccepted) > 0) {
+								this.setPower(this.getPower() + (ownPowerSent-powerAccepted));
+								//System.out.println("Refunding power " + (ownPowerSent-powerAccepted));
+							}
 						}
 					}
-				}*/
+				}
 			}
 		}
 	}

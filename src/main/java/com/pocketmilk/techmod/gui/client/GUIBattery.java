@@ -45,7 +45,6 @@ public class GUIBattery extends GuiContainer
 		int j = 0;
 		
 		j = generator.getEnergyScaled(24);
-		System.out.println(generator.getPower());
 		if (j > 0)
 		{
 			this.drawTexturedModalRect(k + 109, l + 21 + 12, 176, 0, j + 1, 16);

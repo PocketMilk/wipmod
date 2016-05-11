@@ -41,7 +41,6 @@ public class BlockBattery extends BaseMachine {
 	@Override
 	public IBlockState getActualState(IBlockState state, IBlockAccess worldIn, BlockPos pos)
     {
-		System.out.println(state.getProperties());
 		return this.getDefaultState().withProperty(FACING, state.getValue(FACING)).withProperty(PERCENT, state.getValue(PERCENT));
     }
 	
