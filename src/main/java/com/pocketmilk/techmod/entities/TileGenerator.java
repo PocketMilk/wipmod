@@ -32,6 +32,7 @@ public class TileGenerator extends TileEntity implements ITickable, ISidedInvent
 	
 	private int burnProgress = 0;
 	private int lastBurnTime = 0;
+	private int generateRate = 10;
 	
 	public ItemStack[] slots;
 	public int SLOT_INVENTORY_START = -1;
@@ -58,9 +59,10 @@ public class TileGenerator extends TileEntity implements ITickable, ISidedInvent
 		Init();
 	}
 	
+	
 	private void Init() {
 		this.setCapacity(10000);
-		this.setInputRate(10);
+		this.setInputRate(0);
 		this.setOutputRate(30);
 	}
 	
@@ -129,7 +131,7 @@ public class TileGenerator extends TileEntity implements ITickable, ISidedInvent
     
     public boolean isInputSide (EnumFacing side) {
         
-        return this.container.isInputSide(side);
+        return false;
     }
     
     public boolean isOutputSide (EnumFacing side) {
@@ -303,7 +305,7 @@ public class TileGenerator extends TileEntity implements ITickable, ISidedInvent
 				if(this.getPower() >= this.getCapacity()) {
 	        		this.setPower(this.getCapacity());
 	        	} else {
-	        		this.setPower(this.getPower() + this.getInputRate());
+	        		this.setPower(this.getPower() + this.generateRate);
 	        	}
 			}
 			this.outputEnergy();

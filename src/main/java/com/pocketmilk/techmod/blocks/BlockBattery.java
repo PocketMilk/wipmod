@@ -44,7 +44,7 @@ public class BlockBattery extends BaseMachine {
     {
 		TileBattery thisTile = (TileBattery) worldIn.getTileEntity(pos);
 		int tilePercent = thisTile.getPwrAmount();
-		System.out.println(tilePercent);
+		//System.out.println(tilePercent);
 		return state.withProperty(FACING, state.getValue(FACING)).withProperty(PERCENT, tilePercent);
     }
 	

@@ -1,13 +1,20 @@
 package com.pocketmilk.techmod.entities;
 
+import java.util.Iterator;
+import java.util.List;
+
 import com.pocketmilk.techmod.blocks.BlockWireBase;
 
 import net.darkhax.tesla.Tesla;
+import net.darkhax.tesla.api.ITeslaHandler;
 import net.darkhax.tesla.api.TeslaContainer;
 import net.darkhax.tesla.capability.TeslaStorage;
 import net.darkhax.tesla.lib.TeslaUtils;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.NetworkManager;
+import net.minecraft.network.Packet;
+import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
@@ -35,8 +42,8 @@ public class TileWire extends TileEntity implements ITickable {
 	
 	public void doInit() {
 		this.setCapacity(512);
-		this.setInputRate(16);
-		this.setOutputRate(16);
+		this.setInputRate(32);
+		this.setOutputRate(32);
 	}
 	
 	public boolean hasPower() {
@@ -55,12 +62,12 @@ public class TileWire extends TileEntity implements ITickable {
 		return this.container.getCapacity(EnumFacing.UP);
 	}
 	
-	public void givePower(long tesla, EnumFacing side, boolean simulated) {
-		this.container.givePower(tesla, side, simulated);
+	public long givePower(long tesla, EnumFacing side, boolean simulated) {
+		return this.container.givePower(tesla, side, simulated);
 	}
 	
-	public void takePower (long tesla, EnumFacing side, boolean simulated) {
-		this.container.takePower(tesla, side, simulated);
+	public long takePower (long tesla, EnumFacing side, boolean simulated) {
+		return this.container.takePower(tesla, side, simulated);
 	}
 	
 	public void setCapacity(long capacity) {
@@ -204,10 +211,38 @@ public class TileWire extends TileEntity implements ITickable {
             	this.connectedWest = tmpconnectedWest;
             	this.connectedUp = tmpconnectedUp;
             	this.connectedDown = tmpconnectedDown;
-            	//System.out.println("Tesla container detected?");
             	this.updateState();
             }
+            this.distributePower();
         }
+    }
+    
+    public void distributePower() {
+    	int sidesConnected = 0;
+    	long powerSent = 0;
+    	if(this.connectedNorth) sidesConnected += 1;
+    	if(this.connectedSouth) sidesConnected += 1;
+    	if(this.connectedEast) sidesConnected += 1;
+    	if(this.connectedWest) sidesConnected += 1;
+    	if(this.connectedUp) sidesConnected += 1;
+    	if(this.connectedDown) sidesConnected += 1;
+    	for (final EnumFacing facing : EnumFacing.values()) {
+            final TileEntity tile = worldObj.getTileEntity(pos.offset(facing));
+            if(tile instanceof TileWire)
+            	sidesConnected -= 1;
+    	}
+		if (this.getPower()>0) {
+			//System.out.println(sidesConnected);
+			long powerToSend = 0;
+			if(sidesConnected == 0)
+				powerToSend = this.getOutputRate();
+			else
+				powerToSend = (this.getOutputRate()/sidesConnected);
+			powerSent = TeslaUtils.distributePowerEqually(worldObj, pos, powerToSend, false);
+			System.out.println(powerSent);
+			this.setPower(this.getPower() - powerSent);
+		}
+    	
     }
     
 	public void updateState()
@@ -228,5 +263,18 @@ public class TileWire extends TileEntity implements ITickable {
 			}
 			this.hasChanged = false;
 		}
+	}
+	@Override
+	public Packet getDescriptionPacket() {
+		NBTTagCompound nbttagcompound = new NBTTagCompound();
+		this.writeToNBT(nbttagcompound);
+		return new SPacketUpdateTileEntity(this.getPos(), this.getBlockMetadata(), nbttagcompound);
+	}
+
+	@Override
+	public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
+		readFromNBT(pkt.getNbtCompound());
+		final IBlockState state = getWorld().getBlockState(getPos());
+		getWorld().notifyBlockUpdate(getPos(), state, state, 3);
 	}
 }

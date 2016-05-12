@@ -201,11 +201,11 @@ public class TileBattery extends TileEntity implements ITickable {
 		{
 			BlockBattery blockMachineBase = (BlockBattery) BlockStateContainer.getBlock();
 			if (BlockStateContainer.getValue(blockMachineBase.PERCENT) != this.pwrAmount) {
-				System.out.println("Before " + worldObj.getBlockState(pos).getProperties().toString());
+				//System.out.println("Before " + worldObj.getBlockState(pos).getProperties().toString());
 				EnumFacing facing = worldObj.getBlockState(pos).getValue(blockMachineBase.FACING);
 				IBlockState state = worldObj.getBlockState(pos).withProperty(blockMachineBase.FACING, facing).withProperty(blockMachineBase.PERCENT, this.pwrAmount);
 				worldObj.setBlockState(pos, state);
-				System.out.println("After " + worldObj.getBlockState(pos).getProperties().toString());
+				//System.out.println("After " + worldObj.getBlockState(pos).getProperties().toString());
 				this.markDirty();
 			}
 			
