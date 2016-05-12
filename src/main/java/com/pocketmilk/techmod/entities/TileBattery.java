@@ -8,12 +8,18 @@ import net.darkhax.tesla.capability.TeslaStorage;
 import net.darkhax.tesla.lib.TeslaUtils;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.NetworkManager;
+import net.minecraft.network.Packet;
+import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.property.ExtendedBlockState;
+import net.minecraftforge.common.property.IExtendedBlockState;
+import net.minecraftforge.common.property.IUnlistedProperty;
 
 public class TileBattery extends TileEntity implements ITickable {
 	
@@ -97,7 +103,7 @@ public class TileBattery extends TileEntity implements ITickable {
 	@Override
 	public void readFromNBT(NBTTagCompound compound) {
 		super.readFromNBT(compound);
-		this.pwrAmount = compound.getInteger("pwrAmount");
+		if (compound.hasKey("pwrAmount"))this.pwrAmount = compound.getInteger("pwrAmount");
 		this.container = new TeslaContainer(null, compound.getTag("TeslaContainer"));
 	}
 	
@@ -122,11 +128,7 @@ public class TileBattery extends TileEntity implements ITickable {
 	@Override
 	public boolean shouldRefresh(World world, BlockPos pos, IBlockState oldState, IBlockState newSate)
 	{
-		if (oldState.getBlock() != newSate.getBlock())
-		{
-			return true;
-		}
-		return false;
+		return (oldState.getBlock() != newSate.getBlock());
 	}
 	
 	@Override
@@ -143,7 +145,8 @@ public class TileBattery extends TileEntity implements ITickable {
 	public long getPercentStorage() {
 		long curPower = this.getPower();
 		long maxPower = this.getCapacity();
-		
+		if(curPower == 0)
+			return 0;
 		return (curPower * 100) / maxPower;
 	}
 	
@@ -160,36 +163,66 @@ public class TileBattery extends TileEntity implements ITickable {
         if (!this.worldObj.isRemote) {
         	if(this.getPower() >= this.getCapacity()) {
         		this.setPower(this.getCapacity());
-        		this.updateState(4);
         	} else {
         		//this.setPower(this.getPower() + 1);
         		//System.out.println("I have " + this.container.getStoredPower(EnumFacing.UP) + "/" + this.container.getCapacity(EnumFacing.UP) + " power. I am at " + this.pos.toString());
             	//System.out.println("Percentage = " + getPercentStorage());
         	}
-        	if(this.getPercentStorage() == 0) {
-        		this.updateState(0);
-        	}
-        	else if(this.getPercentStorage() == 25 || this.getPercentStorage() == 50 || this.getPercentStorage() == 75) {
-        		this.updateState((int)this.getPercentStorage()/25);
+        	switch((int)this.getPercentStorage()) {
+        	case 0:
+        		this.pwrAmount = 0;
+        		this.updateState();
+        		break;
+        	case 25:
+        		this.pwrAmount = 1;
+        		this.updateState();
+        		break;
+        	case 50:
+        		this.pwrAmount = 2;
+        		this.updateState();
+        		break;
+        	case 75:
+        		this.pwrAmount = 3;
+        		this.updateState();
+        		break;
+        	case 100:
+        		this.pwrAmount = 4;
+        		this.updateState();
+        		break;
         	}
         }
     }
     
-	public void updateState(int amount)
+	public void updateState()
 	{
-		this.pwrAmount = amount;
+		//System.out.println(this.pwrAmount);
 		IBlockState BlockStateContainer = worldObj.getBlockState(pos);
 		if (BlockStateContainer.getBlock() instanceof BlockBattery)
 		{
 			BlockBattery blockMachineBase = (BlockBattery) BlockStateContainer.getBlock();
-			if (BlockStateContainer.getValue(blockMachineBase.PERCENT) != amount) {
-				//System.out.println("Before " + worldObj.getBlockState(pos).getProperties().toString());
+			if (BlockStateContainer.getValue(blockMachineBase.PERCENT) != this.pwrAmount) {
+				System.out.println("Before " + worldObj.getBlockState(pos).getProperties().toString());
 				EnumFacing facing = worldObj.getBlockState(pos).getValue(blockMachineBase.FACING);
-				IBlockState state = worldObj.getBlockState(pos).withProperty(blockMachineBase.PERCENT, amount).withProperty(blockMachineBase.FACING, facing);
+				IBlockState state = worldObj.getBlockState(pos).withProperty(blockMachineBase.FACING, facing).withProperty(blockMachineBase.PERCENT, this.pwrAmount);
 				worldObj.setBlockState(pos, state);
-				//System.out.println("After " + worldObj.getBlockState(pos).getProperties().toString());
+				System.out.println("After " + worldObj.getBlockState(pos).getProperties().toString());
+				this.markDirty();
 			}
 			
 		}
+	}
+	
+	@Override
+	public Packet getDescriptionPacket() {
+		NBTTagCompound nbttagcompound = new NBTTagCompound();
+		this.writeToNBT(nbttagcompound);
+		return new SPacketUpdateTileEntity(this.getPos(), this.getBlockMetadata(), nbttagcompound);
+	}
+
+	@Override
+	public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
+		readFromNBT(pkt.getNbtCompound());
+		final IBlockState state = getWorld().getBlockState(getPos());
+		getWorld().notifyBlockUpdate(getPos(), state, state, 3);
 	}
 }

@@ -35,7 +35,7 @@ public abstract class BaseMachine extends BlockContainer {
 		// Supposedly this is important to set
 		this.isBlockContainer = true;
 		
-		this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH));
+		//this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH));
 	}
 	
 	public void preInit() {
@@ -59,11 +59,11 @@ public abstract class BaseMachine extends BlockContainer {
 	
 	
 	// Creates the facing and active property states
-	@Override
-	protected BlockStateContainer createBlockState() {
-		FACING = PropertyDirection.create("facing", EnumFacing.Plane.HORIZONTAL);
-		return new BlockStateContainer(this, FACING);
-	} 
+	//@Override
+	//protected BlockStateContainer createBlockState() {
+	//	FACING = PropertyDirection.create("facing", EnumFacing.Plane.HORIZONTAL);
+	//	return new BlockStateContainer(this, FACING);
+	//} 
     
 	// When this block is placed, the facing property is oriented towards yourself
     @Override

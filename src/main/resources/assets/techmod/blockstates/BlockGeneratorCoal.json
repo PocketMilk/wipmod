@@ -1,6 +1,6 @@
 {
     "variants": {
-        "normal": { "model": "techmod:BlockGeneratorCoal" },
+        "normal": { "model": "techmod:BlockWireBase" },
 		"active=false,facing=south": { "model": "techmod:BlockGeneratorCoal" },
         "active=false,facing=west": { "model": "techmod:BlockGeneratorCoal", "y": 90 },
         "active=false,facing=north": { "model": "techmod:BlockGeneratorCoal", "y": 180 },

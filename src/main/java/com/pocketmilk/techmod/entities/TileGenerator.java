@@ -328,11 +328,11 @@ public class TileGenerator extends TileEntity implements ITickable, ISidedInvent
 		{
 			BlockGeneratorCoal blockMachineBase = (BlockGeneratorCoal) BlockStateContainer.getBlock();
 			if (BlockStateContainer.getValue(blockMachineBase.ACTIVE) != this.isBurning()) {
-				System.out.println("Before " + worldObj.getBlockState(pos).getProperties().toString());
+				//System.out.println("Before " + worldObj.getBlockState(pos).getProperties().toString());
 				EnumFacing facing = worldObj.getBlockState(pos).getValue(blockMachineBase.FACING);
 				IBlockState state = worldObj.getBlockState(pos).withProperty(blockMachineBase.ACTIVE, this.isBurning()).withProperty(blockMachineBase.FACING, facing);
 				worldObj.setBlockState(pos, state);
-				System.out.println("After " + worldObj.getBlockState(pos).getProperties().toString());
+				//System.out.println("After " + worldObj.getBlockState(pos).getProperties().toString());
 			}
 			
 		}

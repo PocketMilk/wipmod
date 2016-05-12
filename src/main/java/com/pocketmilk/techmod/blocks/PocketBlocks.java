@@ -12,6 +12,7 @@ public class PocketBlocks {
 	//public static Block testBlock;
 	public static Block blockGeneratorCoal;
 	public static Block blockBattery;
+	public static Block blockWireBase;
 	
 	public static void initBlocks() {
 		//testBlock = new BaseBlock("testBlock", Material.iron, 1, 1);
@@ -26,12 +27,15 @@ public class PocketBlocks {
 	
 		blockBattery = new BlockBattery();
 		GameRegistry.registerBlock(blockBattery, blockBattery.getUnlocalizedName().substring(5));
-	
+		
+		blockWireBase = new BlockWireBase();
+		GameRegistry.registerBlock(blockWireBase, blockWireBase.getUnlocalizedName().substring(5));
 	}
 	
 	public static void addRecipes() {
 		((BaseMachine) blockGeneratorCoal).preInit();
 		((BaseMachine) blockBattery).preInit();
+		((BlockWireBase) blockWireBase).preInit();
 	}
 	
 }
